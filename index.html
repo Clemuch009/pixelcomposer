@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PixelComposer — deterministic fusion engine</title>
+<style>
+:root{
+  --bg:#0D0D0F;--panel:#141416;--card:#1C1C1F;--border:#262629;
+  --accent:#FF5533;--text:#EFEFEF;--muted:#66666E;--radius:6px;
+  --font:'JetBrains Mono','Fira Code','Courier New',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:var(--font);overflow:hidden;}
+.topbar{height:44px;border-bottom:1px solid var(--border);background:var(--panel);display:flex;align-items:center;justify-content:space-between;padding:0 16px;font-size:12px;letter-spacing:1px;}
+.logo{font-weight:700;}
+.tag{color:var(--muted);font-size:11px;}
+.feedback-btn{background:#166534;border:1px solid #16a34a;color:#bbf7d0;padding:5px 14px;border-radius:var(--radius);cursor:pointer;font-family:var(--font);font-size:11px;letter-spacing:0.5px;transition:background 0.15s,border-color 0.15s;font-weight:600;}
+.feedback-btn:hover{background:#15803d;border-color:#22c55e;}
+.fb-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:1000;display:none;align-items:center;justify-content:center;}
+.fb-overlay.active{display:flex;}
+.fb-modal{background:#1C1C1F;border:1px solid #262629;border-radius:10px;padding:24px;width:380px;max-width:95vw;display:flex;flex-direction:column;gap:14px;}
+.fb-title{font-size:13px;font-weight:700;color:#EFEFEF;letter-spacing:0.5px;}
+.fb-subtitle{font-size:11px;color:#66666E;margin-top:-8px;}
+.fb-stars{display:flex;gap:6px;}
+.fb-star{font-size:22px;cursor:pointer;opacity:0.35;transition:opacity 0.1s,transform 0.1s;user-select:none;}
+.fb-star.active{opacity:1;}
+.fb-star:hover{transform:scale(1.2);}
+.fb-textarea{width:100%;background:#141416;border:1px solid #262629;color:#EFEFEF;padding:10px;border-radius:6px;font-family:'JetBrains Mono','Fira Code','Courier New',monospace;font-size:11px;resize:vertical;min-height:90px;outline:none;}
+.fb-textarea:focus{border-color:#66666E;}
+.fb-row{display:flex;gap:8px;justify-content:flex-end;}
+.fb-cancel{background:transparent;border:1px solid #262629;color:#66666E;padding:7px 16px;border-radius:6px;cursor:pointer;font-family:inherit;font-size:11px;}
+.fb-cancel:hover{border-color:#66666E;color:#EFEFEF;}
+.fb-submit{background:#166534;border:1px solid #16a34a;color:#bbf7d0;padding:7px 16px;border-radius:6px;cursor:pointer;font-family:inherit;font-size:11px;font-weight:600;}
+.fb-submit:hover{background:#15803d;}
+.fb-submit:disabled{opacity:0.4;cursor:not-allowed;}
+.fb-thanks{font-size:12px;color:#86efac;text-align:center;display:none;}
+.root{display:grid;grid-template-columns:260px 1fr;height:calc(100vh - 44px - 32px);}
+.sidebar{background:var(--panel);border-right:1px solid var(--border);padding:14px;overflow-y:auto;display:flex;flex-direction:column;gap:12px;}
+.sec-label{font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;}
+.sep{height:1px;background:var(--border);}
+select{width:100%;background:var(--card);border:1px solid var(--border);color:var(--text);padding:7px 8px;border-radius:var(--radius);font-family:var(--font);font-size:11px;cursor:pointer;}
+select:focus{outline:none;border-color:var(--muted);}
+.slider-wrap{display:flex;flex-direction:column;gap:4px;}
+.slider-hdr{display:flex;justify-content:space-between;}
+.slider-hdr span:first-child{font-size:10px;color:var(--muted);}
+.slider-hdr span:last-child{font-size:11px;color:var(--accent);font-weight:600;}
+input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer;}
+.custom-box{display:none;flex-direction:column;gap:6px;margin-top:6px;}
+.custom-box input[type=number]{width:100%;background:var(--card);border:1px solid var(--border);color:var(--text);padding:7px 8px;border-radius:var(--radius);font-family:var(--font);font-size:11px;}
+.btn{width:100%;background:var(--card);border:1px solid var(--border);color:var(--text);padding:9px;border-radius:var(--radius);cursor:pointer;font-family:var(--font);font-size:11px;transition:border-color 0.15s;}
+.btn:hover{border-color:var(--accent);}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:white;font-weight:600;}
+.btn.primary:hover{background:#ff6644;}
+.btn:disabled{opacity:0.35;cursor:not-allowed;pointer-events:none;}
+.btn-row{display:flex;gap:6px;}
+.btn-row .btn{flex:1;}
+.btn.active{border-color:var(--accent);color:var(--accent);}
+.main{padding:12px;overflow:hidden;display:flex;flex-direction:column;gap:10px;}
+.panels{flex:1;display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;min-height:0;}
+.panel{display:flex;flex-direction:column;gap:5px;min-height:0;}
+.panel-hdr{display:flex;align-items:center;justify-content:space-between;}
+.panel-hdr .sec-label{margin-bottom:0;}
+.panel-info{font-size:10px;color:var(--muted);}
+.drop-zone{flex:1;min-height:0;background:var(--card);border:1px dashed var(--border);border-radius:var(--radius);overflow:hidden;position:relative;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:border-color 0.15s,background 0.15s;}
+.drop-zone:hover{border-color:var(--accent);}
+.drop-zone.drag-over{border-color:#3B82F6;background:#161626;border-style:solid;}
+.drop-zone.loaded{border-style:solid;border-color:var(--border);}
+.drop-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;}
+.drop-zone canvas{width:100%;height:100%;object-fit:contain;display:none;}
+.placeholder{color:var(--muted);font-size:11px;text-align:center;padding:16px;pointer-events:none;}
+.placeholder svg{width:26px;height:26px;opacity:0.3;display:block;margin:0 auto 8px;}
+.output-wrap{flex:1;min-height:0;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;position:relative;display:flex;align-items:center;justify-content:center;}
+.output-wrap canvas{width:100%;height:100%;object-fit:contain;display:none;}
+.loading-overlay{position:absolute;inset:0;background:rgba(13,13,15,0.92);display:none;align-items:center;justify-content:center;flex-direction:column;gap:12px;z-index:10;}
+.loading-overlay.active{display:flex;}
+.spinner{width:28px;height:28px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 0.7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.loading-text{font-size:11px;color:var(--muted);}
+.progress-bar-wrap{width:180px;height:3px;background:var(--border);border-radius:2px;overflow:hidden;}
+.progress-bar{height:100%;background:var(--accent);width:0%;transition:width 0.15s;}
+.inspector{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:10px 12px;flex-shrink:0;}
+.insp-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.insp-coord{font-size:11px;color:var(--accent);}
+.insp-mode{font-size:10px;color:var(--muted);}
+.inspector-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
+.inspect-box{background:var(--card);border:1px solid var(--border);padding:8px;border-radius:var(--radius);}
+.inspect-title{color:var(--muted);font-size:10px;margin-bottom:5px;}
+.inspect-val{font-size:11px;display:flex;align-items:center;gap:6px;}
+.swatch{width:14px;height:14px;border-radius:3px;border:1px solid var(--border);flex-shrink:0;background:var(--card);}
+.contrib{margin-top:8px;display:flex;gap:20px;}
+.contrib-item{font-size:11px;}
+.contrib-item span{color:var(--accent);font-weight:700;}
+.res-warn{font-size:10px;color:#F59E0B;margin-top:5px;display:none;line-height:1.4;}
+.statusbar{height:32px;border-top:1px solid var(--border);background:var(--panel);display:flex;align-items:center;justify-content:space-between;padding:0 16px;font-size:11px;color:var(--muted);}
+@media(max-width:1000px){
+  body{overflow:auto;}
+  .root{grid-template-columns:1fr;height:auto;}
+  .sidebar{border-right:none;border-bottom:1px solid var(--border);}
+  .main{overflow:auto;}
+  .panels{grid-template-columns:1fr;height:auto;}
+  .drop-zone{height:200px;}
+  .output-wrap{height:260px;}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="logo">PIXELCOMPOSER</div>
+  <div class="tag">deterministic fusion · linear RGB · Lanczos · local only</div>
+  <button class="feedback-btn" onclick="openFeedback()">⭐ feedback</button>
+</div>
+
+<div class="root">
+  <div class="sidebar">
+
+    <div>
+      <div class="sec-label">FUSION MODE</div>
+      <select id="modeSelect">
+        <option value="frequency">▸ frequency fusion</option>
+        <option value="normal">alpha blend</option>
+        <option value="detail">detail preserve</option>
+        <option value="multiply">multiply</option>
+        <option value="screen">screen</option>
+        <option value="overlay">overlay</option>
+        <option value="soft_light">soft light</option>
+        <option value="difference">difference</option>
+      </select>
+    </div>
+
+    <div id="freqControls">
+      <div class="slider-wrap">
+        <div class="slider-hdr"><span>frequency split σ</span><span id="sigmaDisplay">8</span></div>
+        <input type="range" id="sigmaSlider" min="1" max="30" value="8">
+      </div>
+      <div style="margin-top:8px;">
+        <div class="sec-label">LOW FREQ FROM</div>
+        <div class="btn-row">
+          <button class="btn active" id="btnLowA" onclick="setLowSrc('A')">A (lighting)</button>
+          <button class="btn" id="btnLowB" onclick="setLowSrc('B')">B (lighting)</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="alphaControls" style="display:none;">
+      <div class="slider-wrap">
+        <div class="slider-hdr"><span>blend A → B</span><span id="alphaDisplay">50%</span></div>
+        <input type="range" id="alphaSlider" min="0" max="100" value="50">
+      </div>
+    </div>
+
+    <div class="sep"></div>
+
+    <div>
+      <div class="sec-label">OUTPUT RESOLUTION</div>
+      <select id="resolutionSelect">
+        <option value="original">original resolution</option>
+        <option value="hd">HD — 1280 × 720</option>
+        <option value="fhd" selected>Full HD — 1920 × 1080</option>
+        <option value="qhd">Quad HD — 2560 × 1440</option>
+        <option value="4k">4K UHD — 3840 × 2160</option>
+        <option value="square">Square — 1080 × 1080</option>
+        <option value="custom">custom</option>
+      </select>
+      <div class="res-warn" id="resWarn">⚠ output exceeds source resolution — upscaling from limited source detail</div>
+      <div class="custom-box" id="customBox">
+        <div class="sec-label" style="margin-top:4px;">WIDTH</div>
+        <input type="number" id="customWidth" value="1920" min="64" max="8192">
+        <div class="sec-label">HEIGHT</div>
+        <input type="number" id="customHeight" value="1080" min="64" max="8192">
+      </div>
+    </div>
+
+    <div class="sep"></div>
+
+    <div>
+      <div class="sec-label">EXPORT SHARPENING</div>
+      <div class="slider-wrap">
+        <div class="slider-hdr"><span>unsharp amount</span><span id="unsharpDisplay">40%</span></div>
+        <input type="range" id="unsharpSlider" min="0" max="100" value="40">
+      </div>
+    </div>
+
+    <div class="sep"></div>
+
+    <button class="btn primary" id="exportBtn" disabled>EXPORT PNG</button>
+
+  </div>
+
+  <div class="main">
+    <div class="panels">
+
+      <div class="panel">
+        <div class="panel-hdr">
+          <span class="sec-label">IMAGE A</span>
+          <span class="panel-info" id="infoA">—</span>
+        </div>
+        <div class="drop-zone" id="dropA"
+             ondragover="onDrag(event,'A')" ondragleave="offDrag('A')" ondrop="onDrop(event,'A')">
+          <input type="file" id="fileA" accept="image/*">
+          <div class="placeholder" id="hintA">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <rect x="3" y="3" width="18" height="18" rx="2"/>
+              <circle cx="8.5" cy="8.5" r="1.5"/>
+              <path d="m21 15-5-5L5 21"/>
+            </svg>
+            drop or click to load
+          </div>
+          <canvas id="canvasA"></canvas>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-hdr">
+          <span class="sec-label">IMAGE B</span>
+          <span class="panel-info" id="infoB">—</span>
+        </div>
+        <div class="drop-zone" id="dropB"
+             ondragover="onDrag(event,'B')" ondragleave="offDrag('B')" ondrop="onDrop(event,'B')">
+          <input type="file" id="fileB" accept="image/*">
+          <div class="placeholder" id="hintB">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <rect x="3" y="3" width="18" height="18" rx="2"/>
+              <circle cx="8.5" cy="8.5" r="1.5"/>
+              <path d="m21 15-5-5L5 21"/>
+            </svg>
+            drop or click to load
+          </div>
+          <canvas id="canvasB"></canvas>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-hdr">
+          <span class="sec-label">OUTPUT</span>
+          <span class="panel-info" id="infoOut">—</span>
+        </div>
+        <div class="output-wrap">
+          <div class="placeholder" id="outPlaceholder">output will appear here</div>
+          <canvas id="canvasOut"></canvas>
+          <div class="loading-overlay" id="loadingOverlay">
+            <div class="spinner"></div>
+            <div class="loading-text" id="loadingText">compositing…</div>
+            <div class="progress-bar-wrap"><div class="progress-bar" id="progressBar"></div></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="inspector">
+      <div class="insp-top">
+        <div class="insp-coord" id="inspCoord">hover output to inspect pixels</div>
+        <div class="insp-mode" id="inspMode">—</div>
+      </div>
+      <div class="inspector-grid">
+        <div class="inspect-box">
+          <div class="inspect-title">IMAGE A</div>
+          <div class="inspect-val"><div class="swatch" id="swatchA"></div><span id="valA">—</span></div>
+        </div>
+        <div class="inspect-box">
+          <div class="inspect-title">IMAGE B</div>
+          <div class="inspect-val"><div class="swatch" id="swatchB"></div><span id="valB">—</span></div>
+        </div>
+        <div class="inspect-box">
+          <div class="inspect-title">OUTPUT</div>
+          <div class="inspect-val"><div class="swatch" id="swatchOut"></div><span id="valOut">—</span></div>
+        </div>
+      </div>
+      <div class="contrib">
+        <div class="contrib-item">A contribution: <span id="contribA">—</span></div>
+        <div class="contrib-item">B contribution: <span id="contribB">—</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="statusbar">
+  <span id="statusMsg">load two images to begin</span>
+  <span id="statusRight"></span>
+</div>
+
+<script>
+// ─────────────────────────────────────────────────────────────
+// WEB WORKER SOURCE — runs entirely off main thread
+// Contains: Lanczos resampling, linear RGB conversion,
+//           all fusion modes, unsharp mask
+// ─────────────────────────────────────────────────────────────
+const WORKER_SRC = `
+
+// sRGB ↔ Linear
+function toLinear(v){
+  v/=255;
+  return v<=0.04045?v/12.92:Math.pow((v+0.055)/1.055,2.4);
+}
+function toSRGB(v){
+  v=Math.max(0,Math.min(1,v));
+  return (v<=0.0031308?v*12.92*255:(1.055*Math.pow(v,1/2.4)-0.055)*255);
+}
+
+// Lanczos sinc kernel
+function lanczosK(x,a){
+  if(x===0)return 1;
+  if(Math.abs(x)>=a)return 0;
+  const px=Math.PI*x;
+  return(a*Math.sin(px)*Math.sin(px/a))/(px*px);
+}
+
+// Lanczos-3 two-pass resize
+// Input: Uint8ClampedArray RGBA, output: Uint8ClampedArray RGBA
+function lanczosResize(src,sw,sh,dw,dh){
+  const a=3;
+  const tmp=new Float32Array(dw*sh*4);
+  const out=new Uint8ClampedArray(dw*dh*4);
+
+  // Horizontal pass sw→dw
+  const xRatio=sw/dw;
+  for(let y=0;y<sh;y++){
+    for(let x=0;x<dw;x++){
+      const sx=(x+0.5)*xRatio-0.5;
+      const x0=Math.floor(sx)-a+1;
+      let r=0,g=0,b=0,al=0,ws=0;
+      for(let k=x0;k<=x0+2*a-1;k++){
+        const kv=lanczosK(sx-k,a);
+        const px=Math.max(0,Math.min(sw-1,k));
+        const si=(y*sw+px)*4;
+        r+=src[si]*kv; g+=src[si+1]*kv; b+=src[si+2]*kv; al+=src[si+3]*kv; ws+=kv;
+      }
+      const di=(y*dw+x)*4;
+      tmp[di]=ws?r/ws:0; tmp[di+1]=ws?g/ws:0; tmp[di+2]=ws?b/ws:0; tmp[di+3]=ws?al/ws:255;
+    }
+  }
+
+  // Vertical pass sh→dh
+  const yRatio=sh/dh;
+  for(let y=0;y<dh;y++){
+    for(let x=0;x<dw;x++){
+      const sy=(y+0.5)*yRatio-0.5;
+      const y0=Math.floor(sy)-a+1;
+      let r=0,g=0,b=0,ws=0;
+      for(let k=y0;k<=y0+2*a-1;k++){
+        const kv=lanczosK(sy-k,a);
+        const py=Math.max(0,Math.min(sh-1,k));
+        const si=(py*dw+x)*4;
+        r+=tmp[si]*kv; g+=tmp[si+1]*kv; b+=tmp[si+2]*kv; ws+=kv;
+      }
+      const di=(y*dw+x)*4;
+      out[di]  =Math.max(0,Math.min(255,ws?r/ws:0));
+      out[di+1]=Math.max(0,Math.min(255,ws?g/ws:0));
+      out[di+2]=Math.max(0,Math.min(255,ws?b/ws:0));
+      out[di+3]=255;
+    }
+  }
+  return out;
+}
+
+// RGBA uint8 → linear float32 (3 channels, no alpha)
+function toLinearBuf(rgba,n){
+  const lin=new Float32Array(n*3);
+  for(let i=0;i<n;i++){
+    lin[i*3]  =toLinear(rgba[i*4]);
+    lin[i*3+1]=toLinear(rgba[i*4+1]);
+    lin[i*3+2]=toLinear(rgba[i*4+2]);
+  }
+  return lin;
+}
+
+// Linear float32 → RGBA uint8
+function toSRGBBuf(lin,n){
+  const out=new Uint8ClampedArray(n*4);
+  for(let i=0;i<n;i++){
+    out[i*4]  =toSRGB(lin[i*3])  |0;
+    out[i*4+1]=toSRGB(lin[i*3+1])|0;
+    out[i*4+2]=toSRGB(lin[i*3+2])|0;
+    out[i*4+3]=255;
+  }
+  return out;
+}
+
+// Separable gaussian blur on linear float32 (3ch)
+function gaussBlur(data,w,h,sigma){
+  const r=Math.ceil(3*sigma)|0;
+  const ks=2*r+1;
+  const k=new Float32Array(ks);
+  let s=0;
+  for(let i=0;i<ks;i++){const x=i-r;k[i]=Math.exp(-(x*x)/(2*sigma*sigma));s+=k[i];}
+  for(let i=0;i<ks;i++)k[i]/=s;
+
+  const tmp=new Float32Array(w*h*3);
+  const out=new Float32Array(w*h*3);
+
+  for(let y=0;y<h;y++){
+    for(let x=0;x<w;x++){
+      let r0=0,g0=0,b0=0;
+      for(let ki=-r;ki<=r;ki++){
+        const px=Math.max(0,Math.min(w-1,x+ki));
+        const si=(y*w+px)*3;
+        const kv=k[ki+r];
+        r0+=data[si]*kv; g0+=data[si+1]*kv; b0+=data[si+2]*kv;
+      }
+      const di=(y*w+x)*3;
+      tmp[di]=r0; tmp[di+1]=g0; tmp[di+2]=b0;
+    }
+  }
+  for(let y=0;y<h;y++){
+    for(let x=0;x<w;x++){
+      let r0=0,g0=0,b0=0;
+      for(let ki=-r;ki<=r;ki++){
+        const py=Math.max(0,Math.min(h-1,y+ki));
+        const si=(py*w+x)*3;
+        const kv=k[ki+r];
+        r0+=tmp[si]*kv; g0+=tmp[si+1]*kv; b0+=tmp[si+2]*kv;
+      }
+      const di=(y*w+x)*3;
+      out[di]=r0; out[di+1]=g0; out[di+2]=b0;
+    }
+  }
+  return out;
+}
+
+// Unsharp mask in linear space
+function unsharpMask(lin,w,h,amount){
+  const blurred=gaussBlur(lin,w,h,1.5);
+  const out=new Float32Array(lin.length);
+  for(let i=0;i<lin.length;i++){
+    out[i]=Math.max(0,Math.min(1,lin[i]+amount*(lin[i]-blurred[i])));
+  }
+  return out;
+}
+
+// All fusion modes — linear RGB space
+function fuse(linA,linB,n,mode,params){
+  const out=new Float32Array(n*3);
+  const atA=new Float32Array(n);
+  const atB=new Float32Array(n);
+  const alpha=params.alpha||0.5;
+  const w=params.w, h=params.h;
+
+  if(mode==='normal'){
+    for(let i=0;i<n;i++){
+      const p=i*3;
+      out[p]  =linA[p]  *(1-alpha)+linB[p]  *alpha;
+      out[p+1]=linA[p+1]*(1-alpha)+linB[p+1]*alpha;
+      out[p+2]=linA[p+2]*(1-alpha)+linB[p+2]*alpha;
+      atA[i]=1-alpha; atB[i]=alpha;
+    }
+  }
+  else if(mode==='multiply'){
+    for(let i=0;i<n;i++){
+      const p=i*3;
+      out[p]=linA[p]*linB[p];
+      out[p+1]=linA[p+1]*linB[p+1];
+      out[p+2]=linA[p+2]*linB[p+2];
+      atA[i]=atB[i]=0.5;
+    }
+  }
+  else if(mode==='screen'){
+    for(let i=0;i<n;i++){
+      const p=i*3;
+      out[p]=1-(1-linA[p])*(1-linB[p]);
+      out[p+1]=1-(1-linA[p+1])*(1-linB[p+1]);
+      out[p+2]=1-(1-linA[p+2])*(1-linB[p+2]);
+      atA[i]=atB[i]=0.5;
+    }
+  }
+  else if(mode==='overlay'){
+    for(let i=0;i<n;i++){
+      const p=i*3;
+      for(let c=0;c<3;c++){
+        const a=linA[p+c],b=linB[p+c];
+        out[p+c]=a<0.5?2*a*b:1-2*(1-a)*(1-b);
+      }
+      atA[i]=atB[i]=0.5;
+    }
+  }
+  else if(mode==='soft_light'){
+    for(let i=0;i<n;i++){
+      const p=i*3;
+      for(let c=0;c<3;c++){
+        const a=linA[p+c],b=linB[p+c];
+        out[p+c]=b<0.5?a-(1-2*b)*a*(1-a):a+(2*b-1)*(Math.sqrt(Math.max(0,a))-a);
+      }
+      atA[i]=atB[i]=0.5;
+    }
+  }
+  else if(mode==='difference'){
+    for(let i=0;i<n;i++){
+      const p=i*3;
+      out[p]=Math.abs(linA[p]-linB[p]);
+      out[p+1]=Math.abs(linA[p+1]-linB[p+1]);
+      out[p+2]=Math.abs(linA[p+2]-linB[p+2]);
+      atA[i]=atB[i]=0.5;
+    }
+  }
+  else if(mode==='frequency'){
+    const sigma=params.sigma||8;
+    const lowSrc=params.lowSrc||'A';
+    const lowA=gaussBlur(linA,w,h,sigma);
+    const lowB=gaussBlur(linB,w,h,sigma);
+    const low=lowSrc==='A'?lowA:lowB;
+    const highSrc=lowSrc==='A'?linB:linA;
+    const highBase=lowSrc==='A'?lowB:lowA;
+    for(let i=0;i<n;i++){
+      const p=i*3;
+      const h0=highSrc[p]-highBase[p];
+      const h1=highSrc[p+1]-highBase[p+1];
+      const h2=highSrc[p+2]-highBase[p+2];
+      out[p]  =Math.max(0,Math.min(1,low[p]  +h0));
+      out[p+1]=Math.max(0,Math.min(1,low[p+1]+h1));
+      out[p+2]=Math.max(0,Math.min(1,low[p+2]+h2));
+      const mag=(Math.abs(h0)+Math.abs(h1)+Math.abs(h2))/3;
+      if(lowSrc==='A'){atA[i]=1-mag;atB[i]=mag;}
+      else            {atB[i]=1-mag;atA[i]=mag;}
+      const t=atA[i]+atB[i]+1e-8;atA[i]/=t;atB[i]/=t;
+    }
+  }
+  else if(mode==='detail'){
+    for(let y=1;y<h-1;y++){
+      for(let x=1;x<w-1;x++){
+        const i=y*w+x;
+        const lum=(yy,xx)=>{const pp=(yy*w+xx)*3;return 0.2126*linB[pp]+0.7152*linB[pp+1]+0.0722*linB[pp+2];};
+        const gx=-lum(y-1,x-1)+lum(y-1,x+1)-2*lum(y,x-1)+2*lum(y,x+1)-lum(y+1,x-1)+lum(y+1,x+1);
+        const gy=-lum(y-1,x-1)-2*lum(y-1,x)-lum(y-1,x+1)+lum(y+1,x-1)+2*lum(y+1,x)+lum(y+1,x+1);
+        const ew=Math.min(1,Math.sqrt(gx*gx+gy*gy)*5);
+        const p=i*3;
+        out[p]  =linB[p]  *ew+linA[p]  *(1-ew);
+        out[p+1]=linB[p+1]*ew+linA[p+1]*(1-ew);
+        out[p+2]=linB[p+2]*ew+linA[p+2]*(1-ew);
+        atA[i]=1-ew; atB[i]=ew;
+      }
+    }
+  }
+  else{
+    for(let i=0;i<n;i++){
+      const p=i*3;
+      out[p]=linA[p]*0.5+linB[p]*0.5;
+      out[p+1]=linA[p+1]*0.5+linB[p+1]*0.5;
+      out[p+2]=linA[p+2]*0.5+linB[p+2]*0.5;
+      atA[i]=atB[i]=0.5;
+    }
+  }
+  return{out,atA,atB};
+}
+
+self.onmessage=function(e){
+  const{rgbaA,rgbaB,sw,sh,dw,dh,mode,params,unsharpAmount}=e.data;
+  const n=dw*dh;
+
+  self.postMessage({type:'progress',pct:5,text:'Lanczos resampling A…'});
+  const resA=lanczosResize(rgbaA,sw,sh,dw,dh);
+
+  self.postMessage({type:'progress',pct:22,text:'Lanczos resampling B…'});
+  const resB=lanczosResize(rgbaB,sw,sh,dw,dh);
+
+  self.postMessage({type:'progress',pct:38,text:'linearising RGB…'});
+  const linA=toLinearBuf(resA,n);
+  const linB=toLinearBuf(resB,n);
+
+  self.postMessage({type:'progress',pct:48,text:'fusing in linear space…'});
+  const{out,atA,atB}=fuse(linA,linB,n,mode,{...params,w:dw,h:dh});
+
+  self.postMessage({type:'progress',pct:82,text:'unsharp mask…'});
+  const sharpened=unsharpAmount>0?unsharpMask(out,dw,dh,unsharpAmount*0.5):out;
+
+  self.postMessage({type:'progress',pct:93,text:'encoding sRGB…'});
+  const rgba=toSRGBBuf(sharpened,n);
+  const rgbaAout=toSRGBBuf(linA,n);
+  const rgbaBout=toSRGBBuf(linB,n);
+
+  self.postMessage({type:'done',rgba,rgbaAout,rgbaBout,atA,atB,dw,dh},
+    [rgba.buffer,rgbaAout.buffer,rgbaBout.buffer,atA.buffer,atB.buffer]);
+};
+`;
+
+// ─────────────────────────────────────────────────────────────
+// MAIN THREAD
+// ─────────────────────────────────────────────────────────────
+const S={
+  imgA:null,imgB:null,
+  resA:null,resB:null,
+  outData:null,attrA:null,attrB:null,
+  w:0,h:0,lowSrc:'A',
+  busy:false,timer:null,worker:null,
+};
+
+function setStatus(m){document.getElementById('statusMsg').textContent=m;}
+function setRight(m){document.getElementById('statusRight').textContent=m;}
+function setProgress(pct,text){
+  document.getElementById('progressBar').style.width=pct+'%';
+  if(text)document.getElementById('loadingText').textContent=text;
+}
+
+// Load image — store FULL original resolution, only scale preview
+function loadFromFile(file,slot){
+  const reader=new FileReader();
+  reader.onload=e=>{
+    const img=new Image();
+    img.onload=()=>{
+      // Full-res offscreen — no MAX cap
+      const off=document.createElement('canvas');
+      off.width=img.naturalWidth; off.height=img.naturalHeight;
+      off.getContext('2d').drawImage(img,0,0);
+      const data=off.getContext('2d').getImageData(0,0,off.width,off.height);
+      if(slot==='A') S.imgA=data; else S.imgB=data;
+
+      // Preview only — separate canvas, scaled down for display
+      const pv=document.getElementById('canvas'+slot);
+      const dz=document.getElementById('drop'+slot);
+      const scale=Math.min(1,(dz.clientWidth-4)/img.naturalWidth,(dz.clientHeight-4)/img.naturalHeight);
+      pv.width=Math.round(img.naturalWidth*scale);
+      pv.height=Math.round(img.naturalHeight*scale);
+      pv.getContext('2d').drawImage(img,0,0,pv.width,pv.height);
+      pv.style.display='block';
+      document.getElementById('hint'+slot).style.display='none';
+      document.getElementById('drop'+slot).classList.add('loaded');
+      document.getElementById('info'+slot).textContent=`${img.naturalWidth}×${img.naturalHeight}`;
+      setStatus(`image ${slot} loaded — ${img.naturalWidth}×${img.naturalHeight} (full resolution preserved)`);
+      checkResWarn();
+      scheduleCompose();
+    };
+    img.src=e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+document.getElementById('fileA').addEventListener('change',e=>{if(e.target.files[0])loadFromFile(e.target.files[0],'A');});
+document.getElementById('fileB').addEventListener('change',e=>{if(e.target.files[0])loadFromFile(e.target.files[0],'B');});
+
+function onDrag(e,slot){e.preventDefault();document.getElementById('drop'+slot).classList.add('drag-over');}
+function offDrag(slot){document.getElementById('drop'+slot).classList.remove('drag-over');}
+function onDrop(e,slot){
+  e.preventDefault();offDrag(slot);
+  const f=e.dataTransfer.files[0];
+  if(f&&f.type.startsWith('image/'))loadFromFile(f,slot);
+}
+
+// Resolution
+function getTargetRes(){
+  const mode=document.getElementById('resolutionSelect').value;
+  const map={hd:{width:1280,height:720},fhd:{width:1920,height:1080},qhd:{width:2560,height:1440},'4k':{width:3840,height:2160},square:{width:1080,height:1080}};
+  if(map[mode])return map[mode];
+  if(mode==='original'){
+    const w=Math.max(S.imgA?S.imgA.width:0,S.imgB?S.imgB.width:0)||1920;
+    const h=Math.max(S.imgA?S.imgA.height:0,S.imgB?S.imgB.height:0)||1080;
+    return{width:w,height:h};
+  }
+  return{
+    width:Math.max(64,parseInt(document.getElementById('customWidth').value)||1920),
+    height:Math.max(64,parseInt(document.getElementById('customHeight').value)||1080),
+  };
+}
+
+function checkResWarn(){
+  if(!S.imgA||!S.imgB)return;
+  const{width:dw,height:dh}=getTargetRes();
+  const srcW=Math.max(S.imgA.width,S.imgB.width);
+  const srcH=Math.max(S.imgA.height,S.imgB.height);
+  document.getElementById('resWarn').style.display=(dw>srcW||dh>srcH)?'block':'none';
+}
+
+// Normalise both inputs to same size before sending to worker
+function normalise(imgData,tw,th){
+  if(imgData.width===tw&&imgData.height===th)return new Uint8ClampedArray(imgData.data);
+  const src=document.createElement('canvas');
+  src.width=imgData.width;src.height=imgData.height;
+  src.getContext('2d').putImageData(imgData,0,0);
+  const dst=document.createElement('canvas');dst.width=tw;dst.height=th;
+  const dctx=dst.getContext('2d');
+  dctx.imageSmoothingEnabled=true;dctx.imageSmoothingQuality='high';
+  dctx.drawImage(src,0,0,tw,th);
+  return new Uint8ClampedArray(dctx.getImageData(0,0,tw,th).data);
+}
+
+// Schedule compose with debounce
+function scheduleCompose(){
+  if(!S.imgA||!S.imgB)return;
+  clearTimeout(S.timer);
+  S.timer=setTimeout(compose,120);
+}
+
+function compose(){
+  if(!S.imgA||!S.imgB||S.busy)return;
+  S.busy=true;
+  if(S.worker){S.worker.terminate();S.worker=null;}
+
+  const overlay=document.getElementById('loadingOverlay');
+  overlay.classList.add('active');
+  setProgress(0,'preparing…');
+
+  const{width:dw,height:dh}=getTargetRes();
+  const mode=document.getElementById('modeSelect').value;
+  const sigma=parseFloat(document.getElementById('sigmaSlider').value);
+  const alpha=parseFloat(document.getElementById('alphaSlider').value)/100;
+  const unsharpAmount=parseFloat(document.getElementById('unsharpSlider').value)/100;
+
+  // Use the larger of the two inputs as the common source size
+  const srcW=Math.max(S.imgA.width,S.imgB.width);
+  const srcH=Math.max(S.imgA.height,S.imgB.height);
+
+  const normA=normalise(S.imgA,srcW,srcH);
+  const normB=normalise(S.imgB,srcW,srcH);
+
+  const blob=new Blob([WORKER_SRC],{type:'application/javascript'});
+  const url=URL.createObjectURL(blob);
+  S.worker=new Worker(url);
+
+  S.worker.onmessage=e=>{
+    const msg=e.data;
+    if(msg.type==='progress'){setProgress(msg.pct,msg.text);return;}
+    if(msg.type==='done'){
+      URL.revokeObjectURL(url);
+      const{rgba,rgbaAout,rgbaBout,atA,atB,dw:ow,dh:oh}=msg;
+      S.w=ow;S.h=oh;
+      S.outData=new ImageData(rgba,ow,oh);
+      S.resA=new ImageData(rgbaAout,ow,oh);
+      S.resB=new ImageData(rgbaBout,ow,oh);
+      S.attrA=atA;S.attrB=atB;
+
+      const c=document.getElementById('canvasOut');
+      c.width=ow;c.height=oh;
+      c.getContext('2d').putImageData(S.outData,0,0);
+      c.style.display='block';
+      document.getElementById('outPlaceholder').style.display='none';
+      document.getElementById('infoOut').textContent=`${ow}×${oh} · ${mode}`;
+      document.getElementById('inspMode').textContent=`linear RGB · ${mode}`;
+      document.getElementById('exportBtn').disabled=false;
+      setProgress(100,'done');
+      overlay.classList.remove('active');
+      S.busy=false;S.worker=null;
+      setStatus(`composed · ${mode} · ${ow}×${oh} · linear RGB · Lanczos-3`);
+      setRight(`src A:${S.imgA.width}×${S.imgA.height}  B:${S.imgB.width}×${S.imgB.height}  →  ${ow}×${oh}`);
+    }
+  };
+
+  S.worker.onerror=err=>{
+    setStatus(`error: ${err.message}`);
+    overlay.classList.remove('active');
+    S.busy=false;
+    URL.revokeObjectURL(url);
+  };
+
+  S.worker.postMessage({
+    rgbaA:normA,rgbaB:normB,
+    sw:srcW,sh:srcH,dw,dh,
+    mode,
+    params:{alpha,sigma,lowSrc:S.lowSrc},
+    unsharpAmount,
+  },[normA.buffer,normB.buffer]);
+}
+
+// Inspector
+document.getElementById('canvasOut').addEventListener('mousemove',inspectPx);
+document.getElementById('canvasOut').addEventListener('click',inspectPx);
+
+function inspectPx(e){
+  if(!S.outData||!S.resA||!S.resB)return;
+  const c=document.getElementById('canvasOut');
+  const rect=c.getBoundingClientRect();
+  const x=Math.floor((e.clientX-rect.left)*c.width/rect.width);
+  const y=Math.floor((e.clientY-rect.top)*c.height/rect.height);
+  if(x<0||y<0||x>=S.w||y>=S.h)return;
+  document.getElementById('inspCoord').textContent=`x:${x}  y:${y}`;
+  const idx=(y*S.w+x)*4;
+  const px=(data,sw,vl)=>{
+    const r=data[idx],g=data[idx+1],b=data[idx+2];
+    const hex=`#${r.toString(16).padStart(2,'0')}${g.toString(16).padStart(2,'0')}${b.toString(16).padStart(2,'0')}`;
+    document.getElementById(sw).style.background=hex;
+    document.getElementById(vl).textContent=`rgb(${r},${g},${b})`;
+  };
+  px(S.resA.data,'swatchA','valA');
+  px(S.resB.data,'swatchB','valB');
+  px(S.outData.data,'swatchOut','valOut');
+  const pi=y*S.w+x;
+  if(S.attrA&&S.attrB){
+    document.getElementById('contribA').textContent=(S.attrA[pi]*100).toFixed(1)+'%';
+    document.getElementById('contribB').textContent=(S.attrB[pi]*100).toFixed(1)+'%';
+  }
+}
+
+// Controls
+function setLowSrc(src){
+  S.lowSrc=src;
+  document.getElementById('btnLowA').classList.toggle('active',src==='A');
+  document.getElementById('btnLowB').classList.toggle('active',src==='B');
+  scheduleCompose();
+}
+document.getElementById('modeSelect').addEventListener('change',()=>{
+  const m=document.getElementById('modeSelect').value;
+  document.getElementById('freqControls').style.display=m==='frequency'?'block':'none';
+  document.getElementById('alphaControls').style.display=m==='normal'?'block':'none';
+  scheduleCompose();
+});
+({
+  sigmaSlider:['sigmaDisplay',''],
+  alphaSlider:['alphaDisplay','%'],
+  unsharpSlider:['unsharpDisplay','%'],
+}||({}));
+[['sigmaSlider','sigmaDisplay',''],['alphaSlider','alphaDisplay','%'],['unsharpSlider','unsharpDisplay','%']].forEach(([id,disp,suf])=>{
+  document.getElementById(id).addEventListener('input',function(){
+    document.getElementById(disp).textContent=this.value+suf;
+    scheduleCompose();
+  });
+});
+document.getElementById('resolutionSelect').addEventListener('change',function(){
+  document.getElementById('customBox').style.display=this.value==='custom'?'flex':'none';
+  checkResWarn();scheduleCompose();
+});
+['customWidth','customHeight'].forEach(id=>{
+  document.getElementById(id).addEventListener('input',()=>{checkResWarn();scheduleCompose();});
+});
+
+// Export
+document.getElementById('exportBtn').addEventListener('click',()=>{
+  if(!S.outData)return;
+  const c=document.createElement('canvas');c.width=S.w;c.height=S.h;
+  c.getContext('2d').putImageData(S.outData,0,0);
+  const a=document.createElement('a');
+  a.href=c.toDataURL('image/png');
+  a.download=`pixelcomposer_${S.w}x${S.h}.png`;
+  a.click();
+  setStatus(`exported · ${S.w}×${S.h} PNG`);
+});
+
+// Init
+document.getElementById('freqControls').style.display='block';
+document.getElementById('alphaControls').style.display='none';
+setStatus('load two images to begin');
+
+// ── Feedback modal ────────────────────────────────────────────
+let fbRating=0;
+function openFeedback(){
+  fbRating=0;
+  document.getElementById('fbText').value='';
+  document.getElementById('fbThanks').style.display='none';
+  document.getElementById('fbForm').style.display='flex';
+  document.querySelectorAll('.fb-star').forEach(s=>s.classList.remove('active'));
+  document.getElementById('fbOverlay').classList.add('active');
+}
+function closeFeedback(){document.getElementById('fbOverlay').classList.remove('active');}
+function setRating(n){
+  fbRating=n;
+  document.querySelectorAll('.fb-star').forEach((s,i)=>s.classList.toggle('active',i<n));
+}
+function submitFeedback(){
+  const text=document.getElementById('fbText').value.trim();
+  if(!text&&!fbRating)return;
+  document.getElementById('fbSubmit').disabled=true;
+  const WORKER='https://pixelcomposer-api.pixelcomposerapp.workers.dev';
+  fetch(WORKER+'/feedback',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({rating:fbRating,message:text||''})
+  })
+  .then(r=>r.json())
+  .catch(()=>({ok:false}));
+  document.getElementById('fbForm').style.display='none';
+  document.getElementById('fbThanks').style.display='block';
+  document.getElementById('fbSubmit').disabled=false;
+  setTimeout(closeFeedback,1800);
+}
+</script>
+
+<div class="fb-overlay" id="fbOverlay" onclick="if(event.target===this)closeFeedback()">
+  <div class="fb-modal">
+    <div class="fb-title">rate PixelComposer</div>
+    <div class="fb-subtitle">takes 10 seconds · helps a lot</div>
+    <div class="fb-stars">
+      <span class="fb-star" onclick="setRating(1)">★</span>
+      <span class="fb-star" onclick="setRating(2)">★</span>
+      <span class="fb-star" onclick="setRating(3)">★</span>
+      <span class="fb-star" onclick="setRating(4)">★</span>
+      <span class="fb-star" onclick="setRating(5)">★</span>
+    </div>
+    <div id="fbForm" style="display:flex;flex-direction:column;gap:10px;">
+      <textarea class="fb-textarea" id="fbText" placeholder="what works, what doesn't, what you'd add…"></textarea>
+      <div class="fb-row">
+        <button class="fb-cancel" onclick="closeFeedback()">cancel</button>
+        <button class="fb-submit" id="fbSubmit" onclick="submitFeedback()">send feedback</button>
+      </div>
+    </div>
+    <div class="fb-thanks" id="fbThanks">✓ thank you — feedback received</div>
+  </div>
+</div>
+</body>
+</html>
