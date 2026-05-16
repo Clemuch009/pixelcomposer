@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- Google tag (gtag.js) -->
+  <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-GS6C4PB6QT"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
@@ -66,7 +66,7 @@ input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer;}
 .btn-row .btn{flex:1;}
 .btn.active{border-color:var(--accent);color:var(--accent);}
 .main{padding:12px;overflow:hidden;display:flex;flex-direction:column;gap:10px;}
-.panels{flex:1;display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;min-height:0;}
+.panels{flex:1;display:grid;grid-template-columns:1fr 32px 1fr 1fr;gap:10px;min-height:0;}
 .panel{display:flex;flex-direction:column;gap:5px;min-height:0;}
 .panel-hdr{display:flex;align-items:center;justify-content:space-between;}
 .panel-hdr .sec-label{margin-bottom:0;}
@@ -102,6 +102,7 @@ input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer;}
 .contrib-item span{color:var(--accent);font-weight:700;}
 .res-warn{font-size:10px;color:#F59E0B;margin-top:5px;display:none;line-height:1.4;}
 .statusbar{height:32px;border-top:1px solid var(--border);background:var(--panel);display:flex;align-items:center;justify-content:space-between;padding:0 16px;font-size:11px;color:var(--muted);}
+@keyframes point{from{transform:translateY(0);}to{transform:translateY(-4px);}}
 @media(max-width:1000px){
   body{overflow:auto;}
   .root{grid-template-columns:1fr;height:auto;}
@@ -127,15 +128,17 @@ input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer;}
     <div>
       <div class="sec-label">FUSION MODE</div>
       <select id="modeSelect">
-        <option value="frequency">▸ frequency fusion</option>
+        <option value="soft_light" selected>▸ soft light (default)</option>
+        <option value="screen">screen</option>
+        <option value="overlay">overlay</option>
+        <option value="hsl">✦ HSL chroma blend (new)</option>
+        <option value="frequency">frequency fusion</option>
         <option value="normal">alpha blend</option>
         <option value="detail">detail preserve</option>
         <option value="multiply">multiply</option>
-        <option value="screen">screen</option>
-        <option value="overlay">overlay</option>
-        <option value="soft_light">soft light</option>
         <option value="difference">difference</option>
       </select>
+      <div style="font-size:10px;color:#F59E0B;margin-top:5px;">↑ try other options for different results</div>
     </div>
 
     <div id="freqControls">
@@ -189,11 +192,26 @@ input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer;}
         <div class="slider-hdr"><span>unsharp amount</span><span id="unsharpDisplay">40%</span></div>
         <input type="range" id="unsharpSlider" min="0" max="100" value="40">
       </div>
+      <div style="font-size:10px;color:#F59E0B;margin-top:5px;">↑ slide to see different sharpness effects</div>
     </div>
 
     <div class="sep"></div>
 
     <button class="btn primary" id="exportBtn" disabled>EXPORT PNG</button>
+
+    <div class="sep"></div>
+
+    <!-- Example loop widget -->
+    <div id="exampleWidget" style="position:relative;">
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:5px;">
+        <span style="font-size:18px;animation:point 1s ease-in-out infinite alternate;">👆</span>
+        <span style="font-size:10px;color:#F59E0B;letter-spacing:1px;text-transform:uppercase;">example — click to pause</span>
+      </div>
+      <canvas id="exampleCanvas" width="226" height="90"
+        style="width:100%;height:90px;border-radius:6px;border:1px solid var(--border);cursor:pointer;display:block;"
+        onclick="toggleExample()"></canvas>
+      <div id="exampleLabel" style="font-size:10px;color:var(--muted);margin-top:4px;text-align:center;">upload two images to try it yourself ↑</div>
+    </div>
 
   </div>
 
@@ -218,6 +236,10 @@ input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer;}
           </div>
           <canvas id="canvasA"></canvas>
         </div>
+      </div>
+
+      <div style="display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+        <button onclick="swapImages()" title="swap A and B" style="background:var(--card);border:1px solid var(--border);color:var(--text);width:28px;height:28px;border-radius:4px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;">⇄</button>
       </div>
 
       <div class="panel">
@@ -540,6 +562,65 @@ function fuse(linA,linB,n,mode,params){
       }
     }
   }
+  else if(mode==='hsl'){
+    // HSL Chroma Blend
+    // Convert both images pixel-by-pixel to HSL.
+    // Blend hue and saturation as weighted average in circular/linear space.
+    // Luminance comes from whichever pixel is higher contrast (normalized brightness mapping).
+    // Convert result back to linear RGB.
+    function rgbToHsl(r,g,b){
+      const max=Math.max(r,g,b),min=Math.min(r,g,b);
+      const l=(max+min)/2;
+      if(max===min)return[0,0,l];
+      const d=max-min;
+      const s=l>0.5?d/(2-max-min):d/(max+min);
+      let h;
+      if(max===r)h=((g-b)/d+(g<b?6:0))/6;
+      else if(max===g)h=((b-r)/d+2)/6;
+      else h=((r-g)/d+4)/6;
+      return[h,s,l];
+    }
+    function hslToRgb(h,s,l){
+      if(s===0)return[l,l,l];
+      const q=l<0.5?l*(1+s):l+s-l*s;
+      const p=2*l-q;
+      const hue2rgb=(p,q,t)=>{
+        if(t<0)t+=1;if(t>1)t-=1;
+        if(t<1/6)return p+(q-p)*6*t;
+        if(t<1/2)return q;
+        if(t<2/3)return p+(q-p)*(2/3-t)*6;
+        return p;
+      };
+      return[hue2rgb(p,q,h+1/3),hue2rgb(p,q,h),hue2rgb(p,q,h-1/3)];
+    }
+    for(let i=0;i<n;i++){
+      const p=i*3;
+      const rA=linA[p],gA=linA[p+1],bA=linA[p+2];
+      const rB=linB[p],gB=linB[p+1],bB=linB[p+2];
+      const [hA,sA,lA]=rgbToHsl(rA,gA,bA);
+      const [hB,sB,lB]=rgbToHsl(rB,gB,bB);
+      // Hue blend — circular interpolation to avoid crossing 0/1 boundary
+      let dh=hB-hA;
+      if(dh>0.5)dh-=1;if(dh<-0.5)dh+=1;
+      const hOut=(hA+dh*0.5+1)%1;
+      // Saturation — weighted blend, boost slightly for vibrancy
+      const sOut=Math.min(1,(sA+sB)*0.55);
+      // Luminance — take from higher-contrast image using normalized brightness mapping
+      // Contrast = local std approximated by |lum - 0.5|
+      const contA=Math.abs(lA-0.5);
+      const contB=Math.abs(lB-0.5);
+      const wA=contA/(contA+contB+1e-8);
+      const wB=1-wA;
+      // Non-linear luminance mapping: preserve perceptual brightness range
+      const lRaw=lA*wA+lB*wB;
+      const lOut=lRaw<0.5?2*lRaw*lRaw:1-Math.pow(-2*lRaw+2,2)/2; // ease in-out
+      const [rO,gO,bO]=hslToRgb(hOut,sOut,lOut);
+      out[p]  =Math.max(0,Math.min(1,rO));
+      out[p+1]=Math.max(0,Math.min(1,gO));
+      out[p+2]=Math.max(0,Math.min(1,bO));
+      atA[i]=wA; atB[i]=wB;
+    }
+  }
   else{
     for(let i=0;i<n;i++){
       const p=i*3;
@@ -599,6 +680,15 @@ function setProgress(pct,text){
   document.getElementById('progressBar').style.width=pct+'%';
   if(text)document.getElementById('loadingText').textContent=text;
 }
+const WORKER='https://pixelcomposer-api.pixelcomposerapp.workers.dev';
+let _uid=localStorage.getItem('pc_uid');
+if(!_uid){_uid=crypto.randomUUID();localStorage.setItem('pc_uid',_uid);}
+const _ref=new URLSearchParams(location.search).get('ref')||document.referrer.slice(0,128)||'';
+function track(event){
+  fetch(WORKER+'/track',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({uid:_uid,event,ref:_ref})}).catch(()=>{});
+}
+track('page_open');
 
 // Load image — store FULL original resolution, only scale preview
 function loadFromFile(file,slot){
@@ -625,6 +715,8 @@ function loadFromFile(file,slot){
       document.getElementById('drop'+slot).classList.add('loaded');
       document.getElementById('info'+slot).textContent=`${img.naturalWidth}×${img.naturalHeight}`;
       setStatus(`image ${slot} loaded — ${img.naturalWidth}×${img.naturalHeight} (full resolution preserved)`);
+      track('image_upload');
+      stopExample();
       checkResWarn();
       scheduleCompose();
     };
@@ -642,6 +734,34 @@ function onDrop(e,slot){
   e.preventDefault();offDrag(slot);
   const f=e.dataTransfer.files[0];
   if(f&&f.type.startsWith('image/'))loadFromFile(f,slot);
+}
+
+function swapImages(){
+  if(!S.imgA&&!S.imgB)return;
+  [S.imgA,S.imgB]=[S.imgB,S.imgA];
+  const cA=document.getElementById('canvasA');
+  const cB=document.getElementById('canvasB');
+  const hA=document.getElementById('hintA');
+  const hB=document.getElementById('hintB');
+  const iA=document.getElementById('infoA');
+  const iB=document.getElementById('infoB');
+  // Swap canvas pixels
+  const tmpCanvas=document.createElement('canvas');
+  tmpCanvas.width=cA.width;tmpCanvas.height=cA.height;
+  tmpCanvas.getContext('2d').drawImage(cA,0,0);
+  cA.width=cB.width;cA.height=cB.height;
+  cA.getContext('2d').drawImage(cB,0,0);
+  cB.width=tmpCanvas.width;cB.height=tmpCanvas.height;
+  cB.getContext('2d').drawImage(tmpCanvas,0,0);
+  // Swap visibility
+  const aLoaded=S.imgA!=null;const bLoaded=S.imgB!=null;
+  cA.style.display=aLoaded?'block':'none';
+  cB.style.display=bLoaded?'block':'none';
+  hA.style.display=aLoaded?'none':'block';
+  hB.style.display=bLoaded?'none':'block';
+  // Swap info text
+  const tmp=iA.textContent;iA.textContent=iB.textContent;iB.textContent=tmp;
+  scheduleCompose();
 }
 
 // Resolution
@@ -691,6 +811,7 @@ function scheduleCompose(){
 function compose(){
   if(!S.imgA||!S.imgB||S.busy)return;
   S.busy=true;
+  track('compose');
   if(S.worker){S.worker.terminate();S.worker=null;}
 
   const overlay=document.getElementById('loadingOverlay');
@@ -828,11 +949,95 @@ document.getElementById('exportBtn').addEventListener('click',()=>{
   a.href=c.toDataURL('image/png');
   a.download=`pixelcomposer_${S.w}x${S.h}.png`;
   a.click();
+  track('export');
   setStatus(`exported · ${S.w}×${S.h} PNG`);
 });
 
+// ── Example loop ──────────────────────────────────────────────
+const EX = {
+  running: true,
+  frame: 0,
+  timer: null,
+  t: 0,
+  paused: false,
+};
+
+// Generate procedural gradient pair and blend them on the example canvas
+function exampleTick() {
+  if (!EX.running || EX.paused) return;
+  const c = document.getElementById('exampleCanvas');
+  const ctx = c.getContext('2d');
+  const w = c.width, h = c.height;
+  EX.t += 0.012;
+  const t = EX.t;
+
+  // Image A — shifting gradient
+  const gA = ctx.createLinearGradient(
+    w * (0.5 + 0.5 * Math.sin(t)),
+    0,
+    w * (0.5 + 0.5 * Math.cos(t * 0.7)),
+    h
+  );
+  const hA = (t * 40) % 360;
+  gA.addColorStop(0, `hsl(${hA},90%,55%)`);
+  gA.addColorStop(1, `hsl(${hA + 120},90%,35%)`);
+
+  // Image B — complementary gradient
+  const gB = ctx.createLinearGradient(
+    0,
+    h * (0.5 + 0.4 * Math.sin(t * 0.8 + 1)),
+    w,
+    h * (0.5 + 0.4 * Math.cos(t * 0.6))
+  );
+  const hB = (hA + 180) % 360;
+  gB.addColorStop(0, `hsl(${hB},85%,50%)`);
+  gB.addColorStop(1, `hsl(${hB + 80},85%,30%)`);
+
+  // Draw A
+  const offA = document.createElement('canvas');
+  offA.width = w; offA.height = h;
+  const ctxA = offA.getContext('2d');
+  ctxA.fillStyle = gA; ctxA.fillRect(0, 0, w, h);
+
+  // Draw B
+  const offB = document.createElement('canvas');
+  offB.width = w; offB.height = h;
+  const ctxB = offB.getContext('2d');
+  ctxB.fillStyle = gB; ctxB.fillRect(0, 0, w, h);
+
+  // Blend using soft light in canvas
+  ctx.clearRect(0, 0, w, h);
+  ctx.drawImage(offA, 0, 0);
+  ctx.globalCompositeOperation = 'soft-light';
+  ctx.drawImage(offB, 0, 0);
+  ctx.globalCompositeOperation = 'source-over';
+
+  // Mode label cycling
+  const modes = ['soft light','screen','overlay','hsl blend','frequency'];
+  const modeIdx = Math.floor(t / 2) % modes.length;
+  document.getElementById('exampleLabel').textContent =
+    `mode: ${modes[modeIdx]} — upload two images to try it yourself ↑`;
+
+  EX.frame++;
+}
+
+function toggleExample() {
+  EX.paused = !EX.paused;
+  const hint = document.querySelector('#exampleWidget span:last-of-type');
+  if (hint) hint.textContent = EX.paused
+    ? 'example — click to resume'
+    : 'example — click to pause';
+}
+
+function stopExample() {
+  EX.paused = true;
+  document.getElementById('exampleWidget').style.opacity = '0.4';
+}
+
+EX.timer = setInterval(exampleTick, 40); // ~25fps
+
 // Init
-document.getElementById('freqControls').style.display='block';
+document.getElementById('freqControls').style.display='none';
 document.getElementById('alphaControls').style.display='none';
 setStatus('load two images to begin');
 
@@ -859,7 +1064,7 @@ function submitFeedback(){
   fetch(WORKER+'/feedback',{
     method:'POST',
     headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({rating:fbRating,message:text||''})
+    body:JSON.stringify({rating:fbRating,message:text||'',uid:_uid})
   })
   .then(r=>r.json())
   .catch(()=>({ok:false}));
