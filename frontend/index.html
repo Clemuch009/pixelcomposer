@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-GS6C4PB6QT"></script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-GS6C4PB6QT"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
@@ -24,7 +23,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);overflow:hid
 .topbar{height:44px;border-bottom:1px solid var(--border);background:var(--panel);display:flex;align-items:center;justify-content:space-between;padding:0 16px;font-size:12px;letter-spacing:1px;}
 .logo{font-weight:700;}
 .tag{color:var(--muted);font-size:11px;}
-.feedback-btn{background:#166534;border:1px solid #16a34a;color:#bbf7d0;padding:5px 14px;border-radius:var(--radius);cursor:pointer;font-family:var(--font);font-size:11px;letter-spacing:0.5px;transiti[...]
+.feedback-btn{background:#166534;border:1px solid #16a34a;color:#bbf7d0;padding:5px 14px;border-radius:var(--radius);cursor:pointer;font-family:var(--font);font-size:11px;letter-spacing:0.5px;transition:background 0.15s,border-color 0.15s;font-weight:600;}
 .feedback-btn:hover{background:#15803d;border-color:#22c55e;}
 .fb-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:1000;display:none;align-items:center;justify-content:center;}
 .fb-overlay.active{display:flex;}
@@ -35,7 +34,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);overflow:hid
 .fb-star{font-size:22px;cursor:pointer;opacity:0.35;transition:opacity 0.1s,transform 0.1s;user-select:none;}
 .fb-star.active{opacity:1;}
 .fb-star:hover{transform:scale(1.2);}
-.fb-textarea{width:100%;background:#141416;border:1px solid #262629;color:#EFEFEF;padding:10px;border-radius:6px;font-family:'JetBrains Mono','Fira Code','Courier New',monospace;font-size:11px;resize:[...]
+.fb-textarea{width:100%;background:#141416;border:1px solid #262629;color:#EFEFEF;padding:10px;border-radius:6px;font-family:'JetBrains Mono','Fira Code','Courier New',monospace;font-size:11px;resize:vertical;min-height:90px;outline:none;}
 .fb-textarea:focus{border-color:#66666E;}
 .fb-row{display:flex;gap:8px;justify-content:flex-end;}
 .fb-cancel{background:transparent;border:1px solid #262629;color:#66666E;padding:7px 16px;border-radius:6px;cursor:pointer;font-family:inherit;font-size:11px;}
@@ -57,7 +56,7 @@ select:focus{outline:none;border-color:var(--muted);}
 input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer;}
 .custom-box{display:none;flex-direction:column;gap:6px;margin-top:6px;}
 .custom-box input[type=number]{width:100%;background:var(--card);border:1px solid var(--border);color:var(--text);padding:7px 8px;border-radius:var(--radius);font-family:var(--font);font-size:11px;}
-.btn{width:100%;background:var(--card);border:1px solid var(--border);color:var(--text);padding:9px;border-radius:var(--radius);cursor:pointer;font-family:var(--font);font-size:11px;transition:border-[...]
+.btn{width:100%;background:var(--card);border:1px solid var(--border);color:var(--text);padding:9px;border-radius:var(--radius);cursor:pointer;font-family:var(--font);font-size:11px;transition:border-color 0.15s;}
 .btn:hover{border-color:var(--accent);}
 .btn.primary{background:var(--accent);border-color:var(--accent);color:white;font-weight:600;}
 .btn.primary:hover{background:#ff6644;}
@@ -71,7 +70,7 @@ input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer;}
 .panel-hdr{display:flex;align-items:center;justify-content:space-between;}
 .panel-hdr .sec-label{margin-bottom:0;}
 .panel-info{font-size:10px;color:var(--muted);}
-.drop-zone{flex:1;min-height:0;background:var(--card);border:1px dashed var(--border);border-radius:var(--radius);overflow:hidden;position:relative;display:flex;align-items:center;justify-content:cent[...]
+.drop-zone{flex:1;min-height:0;background:var(--card);border:1px dashed var(--border);border-radius:var(--radius);overflow:hidden;position:relative;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:border-color 0.15s,background 0.15s;}
 .drop-zone:hover{border-color:var(--accent);}
 .drop-zone.drag-over{border-color:#3B82F6;background:#161626;border-style:solid;}
 .drop-zone.loaded{border-style:solid;border-color:var(--border);}
@@ -79,7 +78,7 @@ input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer;}
 .drop-zone canvas{width:100%;height:100%;object-fit:contain;display:none;}
 .placeholder{color:var(--muted);font-size:11px;text-align:center;padding:16px;pointer-events:none;}
 .placeholder svg{width:26px;height:26px;opacity:0.3;display:block;margin:0 auto 8px;}
-.output-wrap{flex:1;min-height:0;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;position:relative;display:flex;align-items:center;justify-content:cen[...]
+.output-wrap{flex:1;min-height:0;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;position:relative;display:flex;align-items:center;justify-content:center;}
 .output-wrap canvas{width:100%;height:100%;object-fit:contain;display:none;}
 .loading-overlay{position:absolute;inset:0;background:rgba(13,13,15,0.92);display:none;align-items:center;justify-content:center;flex-direction:column;gap:12px;z-index:10;}
 .loading-overlay.active{display:flex;}
@@ -239,7 +238,7 @@ input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer;}
       </div>
 
       <div style="display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-        <button onclick="swapImages()" title="swap A and B" style="background:var(--card);border:1px solid var(--border);color:var(--text);width:28px;height:28px;border-radius:4px;cursor:pointer;font-[...]
+        <button onclick="swapImages()" title="swap A and B" style="background:var(--card);border:1px solid var(--border);color:var(--text);width:28px;height:28px;border-radius:4px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;">⇄</button>
       </div>
 
       <div class="panel">
@@ -313,4 +312,910 @@ input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer;}
 </div>
 
 <script>
-// rest of file remains unchanged...
+// ─────────────────────────────────────────────────────────────
+// WEB WORKER SOURCE — runs entirely off main thread
+// Contains: Lanczos resampling, linear RGB conversion,
+//           all fusion modes, unsharp mask
+// ─────────────────────────────────────────────────────────────
+const WORKER_SRC = `
+
+// ═══════════════════════════════════════════════════════════════
+// PIXELCOMPOSER ENGINE v2 — Hierarchical Compositing Pipeline
+// stages: resample → linearise → analyse → decompose (Laplacian
+// pyramid) → weight (edge-aware + variance + semantic) → fuse →
+// reconstruct → HSL chroma correction → sharpen → encode
+// All math in linear light. Every pixel drives its own blend.
+// ═══════════════════════════════════════════════════════════════
+
+// ── sRGB ↔ Linear ─────────────────────────────────────────────
+function toLinear(v){
+  v/=255;
+  return v<=0.04045?v/12.92:Math.pow((v+0.055)/1.055,2.4);
+}
+function toSRGB(v){
+  v=Math.max(0,Math.min(1,v));
+  return(v<=0.0031308?v*12.92*255:(1.055*Math.pow(v,1/2.4)-0.055)*255);
+}
+
+// ── Buffer conversions ─────────────────────────────────────────
+function toLinearBuf(rgba,n){
+  const lin=new Float32Array(n*3);
+  for(let i=0;i<n;i++){
+    lin[i*3]  =toLinear(rgba[i*4]);
+    lin[i*3+1]=toLinear(rgba[i*4+1]);
+    lin[i*3+2]=toLinear(rgba[i*4+2]);
+  }
+  return lin;
+}
+function toSRGBBuf(lin,n){
+  const out=new Uint8ClampedArray(n*4);
+  for(let i=0;i<n;i++){
+    out[i*4]  =toSRGB(lin[i*3])  |0;
+    out[i*4+1]=toSRGB(lin[i*3+1])|0;
+    out[i*4+2]=toSRGB(lin[i*3+2])|0;
+    out[i*4+3]=255;
+  }
+  return out;
+}
+
+// ── Lanczos-3 sinc kernel ──────────────────────────────────────
+function lanczosK(x,a){
+  if(x===0)return 1;
+  if(Math.abs(x)>=a)return 0;
+  const px=Math.PI*x;
+  return(a*Math.sin(px)*Math.sin(px/a))/(px*px);
+}
+
+// ── Lanczos-3 two-pass resize ─────────────────────────────────
+function lanczosResize(src,sw,sh,dw,dh){
+  const a=3;
+  const tmp=new Float32Array(dw*sh*4);
+  const out=new Uint8ClampedArray(dw*dh*4);
+  const xRatio=sw/dw;
+  for(let y=0;y<sh;y++){
+    for(let x=0;x<dw;x++){
+      const sx=(x+0.5)*xRatio-0.5;
+      const x0=Math.floor(sx)-a+1;
+      let r=0,g=0,b=0,al=0,ws=0;
+      for(let k=x0;k<=x0+2*a-1;k++){
+        const kv=lanczosK(sx-k,a);
+        const px=Math.max(0,Math.min(sw-1,k));
+        const si=(y*sw+px)*4;
+        r+=src[si]*kv;g+=src[si+1]*kv;b+=src[si+2]*kv;al+=src[si+3]*kv;ws+=kv;
+      }
+      const di=(y*dw+x)*4;
+      tmp[di]=ws?r/ws:0;tmp[di+1]=ws?g/ws:0;tmp[di+2]=ws?b/ws:0;tmp[di+3]=ws?al/ws:255;
+    }
+  }
+  const yRatio=sh/dh;
+  for(let y=0;y<dh;y++){
+    for(let x=0;x<dw;x++){
+      const sy=(y+0.5)*yRatio-0.5;
+      const y0=Math.floor(sy)-a+1;
+      let r=0,g=0,b=0,ws=0;
+      for(let k=y0;k<=y0+2*a-1;k++){
+        const kv=lanczosK(sy-k,a);
+        const py=Math.max(0,Math.min(sh-1,k));
+        const si=(py*dw+x)*4;
+        r+=tmp[si]*kv;g+=tmp[si+1]*kv;b+=tmp[si+2]*kv;ws+=kv;
+      }
+      const di=(y*dw+x)*4;
+      out[di]  =Math.max(0,Math.min(255,ws?r/ws:0));
+      out[di+1]=Math.max(0,Math.min(255,ws?g/ws:0));
+      out[di+2]=Math.max(0,Math.min(255,ws?b/ws:0));
+      out[di+3]=255;
+    }
+  }
+  return out;
+}
+
+// ── Separable Gaussian blur — linear float32 3ch ──────────────
+function gaussBlur(data,w,h,sigma){
+  const r=Math.max(1,Math.ceil(3*sigma))|0;
+  const ks=2*r+1;
+  const k=new Float32Array(ks);
+  let s=0;
+  for(let i=0;i<ks;i++){const x=i-r;k[i]=Math.exp(-(x*x)/(2*sigma*sigma));s+=k[i];}
+  for(let i=0;i<ks;i++)k[i]/=s;
+  const tmp=new Float32Array(w*h*3);
+  const out=new Float32Array(w*h*3);
+  for(let y=0;y<h;y++){
+    for(let x=0;x<w;x++){
+      let r0=0,g0=0,b0=0;
+      for(let ki=-r;ki<=r;ki++){
+        const px=Math.max(0,Math.min(w-1,x+ki));
+        const si=(y*w+px)*3;const kv=k[ki+r];
+        r0+=data[si]*kv;g0+=data[si+1]*kv;b0+=data[si+2]*kv;
+      }
+      const di=(y*w+x)*3;tmp[di]=r0;tmp[di+1]=g0;tmp[di+2]=b0;
+    }
+  }
+  for(let y=0;y<h;y++){
+    for(let x=0;x<w;x++){
+      let r0=0,g0=0,b0=0;
+      for(let ki=-r;ki<=r;ki++){
+        const py=Math.max(0,Math.min(h-1,y+ki));
+        const si=(py*w+x)*3;const kv=k[ki+r];
+        r0+=tmp[si]*kv;g0+=tmp[si+1]*kv;b0+=tmp[si+2]*kv;
+      }
+      const di=(y*w+x)*3;out[di]=r0;out[di+1]=g0;out[di+2]=b0;
+    }
+  }
+  return out;
+}
+
+// ── Luminance BT.709 ──────────────────────────────────────────
+function lum(lin,i){return 0.2126*lin[i*3]+0.7152*lin[i*3+1]+0.0722*lin[i*3+2];}
+
+// ═══════════════════════════════════════════════════════════════
+// STAGE 1: SCENE ANALYSIS
+// region 0=flat 1=edge 2=texture 3=highlight 4=shadow
+// ═══════════════════════════════════════════════════════════════
+function analyseScene(lin,w,h){
+  const n=w*h;
+  const regionMap=new Uint8Array(n);
+  const edgeMap=new Float32Array(n);
+  const varMap=new Float32Array(n);
+  const lumMap=new Float32Array(n);
+  for(let i=0;i<n;i++)lumMap[i]=lum(lin,i);
+  for(let y=1;y<h-1;y++){
+    for(let x=1;x<w-1;x++){
+      const i=y*w+x;
+      const gx=(-lumMap[(y-1)*w+(x-1)]+lumMap[(y-1)*w+(x+1)]-2*lumMap[y*w+(x-1)]+2*lumMap[y*w+(x+1)]-lumMap[(y+1)*w+(x-1)]+lumMap[(y+1)*w+(x+1)]);
+      const gy=(-lumMap[(y-1)*w+(x-1)]-2*lumMap[(y-1)*w+x]-lumMap[(y-1)*w+(x+1)]+lumMap[(y+1)*w+(x-1)]+2*lumMap[(y+1)*w+x]+lumMap[(y+1)*w+(x+1)]);
+      edgeMap[i]=Math.sqrt(gx*gx+gy*gy);
+    }
+  }
+  let eMax=0;for(let i=0;i<n;i++)if(edgeMap[i]>eMax)eMax=edgeMap[i];
+  if(eMax>0)for(let i=0;i<n;i++)edgeMap[i]/=eMax;
+  for(let y=2;y<h-2;y++){for(let x=2;x<w-2;x++){
+    let sum=0,sum2=0,cnt=0;
+    for(let dy=-2;dy<=2;dy++){for(let dx=-2;dx<=2;dx++){const v=lumMap[(y+dy)*w+(x+dx)];sum+=v;sum2+=v*v;cnt++;}}
+    const mean=sum/cnt;varMap[y*w+x]=Math.max(0,sum2/cnt-mean*mean);
+  }}
+  let vMax=0;for(let i=0;i<n;i++)if(varMap[i]>vMax)vMax=varMap[i];
+  if(vMax>0)for(let i=0;i<n;i++)varMap[i]/=vMax;
+  const step=Math.max(1,Math.floor(n/2048));const smp=[];
+  for(let i=0;i<n;i+=step)smp.push(lumMap[i]);smp.sort((a,b)=>a-b);
+  const p15=smp[Math.floor(smp.length*0.15)]||0.1;
+  const p85=smp[Math.floor(smp.length*0.85)]||0.9;
+  for(let i=0;i<n;i++){
+    if(edgeMap[i]>0.25)    regionMap[i]=1;
+    else if(lumMap[i]>p85) regionMap[i]=3;
+    else if(lumMap[i]<p15) regionMap[i]=4;
+    else if(varMap[i]>0.3) regionMap[i]=2;
+    else                   regionMap[i]=0;
+  }
+  return{regionMap,edgeMap,varMap,lumMap};
+}
+
+// ═══════════════════════════════════════════════════════════════
+// STAGE 2: LAPLACIAN PYRAMID (6 levels)
+// ═══════════════════════════════════════════════════════════════
+const PYRAMID_LEVELS=6;
+
+function downsample(data,w,h){
+  const dw=Math.max(1,w>>1),dh=Math.max(1,h>>1);
+  const out=new Float32Array(dw*dh*3);
+  for(let y=0;y<dh;y++){for(let x=0;x<dw;x++){
+    const di=(y*dw+x)*3;let r=0,g=0,b=0,cnt=0;
+    for(let dy=0;dy<2;dy++){for(let dx=0;dx<2;dx++){
+      const sy=Math.min(h-1,y*2+dy),sx=Math.min(w-1,x*2+dx);
+      const si=(sy*w+sx)*3;r+=data[si];g+=data[si+1];b+=data[si+2];cnt++;
+    }}
+    out[di]=r/cnt;out[di+1]=g/cnt;out[di+2]=b/cnt;
+  }}
+  return{data:out,w:dw,h:dh};
+}
+
+function upsample(data,sw,sh,dw,dh){
+  const out=new Float32Array(dw*dh*3);
+  for(let y=0;y<dh;y++){for(let x=0;x<dw;x++){
+    const fx=(x+0.5)*sw/dw-0.5,fy=(y+0.5)*sh/dh-0.5;
+    const x0=Math.max(0,Math.min(sw-1,Math.floor(fx))),x1=Math.max(0,Math.min(sw-1,x0+1));
+    const y0=Math.max(0,Math.min(sh-1,Math.floor(fy))),y1=Math.max(0,Math.min(sh-1,y0+1));
+    const tx=fx-Math.floor(fx),ty=fy-Math.floor(fy);
+    const di=(y*dw+x)*3;
+    for(let c=0;c<3;c++){
+      const v00=data[(y0*sw+x0)*3+c],v10=data[(y0*sw+x1)*3+c];
+      const v01=data[(y1*sw+x0)*3+c],v11=data[(y1*sw+x1)*3+c];
+      out[di+c]=(v00*(1-tx)+v10*tx)*(1-ty)+(v01*(1-tx)+v11*tx)*ty;
+    }
+  }}
+  return out;
+}
+
+function buildPyramid(lin,w,h){
+  const gauss=[{data:lin,w,h}];
+  for(let lv=1;lv<PYRAMID_LEVELS;lv++){
+    const prev=gauss[lv-1];
+    const bl=gaussBlur(prev.data,prev.w,prev.h,1.0);
+    gauss.push(downsample(bl,prev.w,prev.h));
+  }
+  const pyr=[];
+  for(let lv=0;lv<PYRAMID_LEVELS-1;lv++){
+    const curr=gauss[lv],next=gauss[lv+1];
+    const up=upsample(next.data,next.w,next.h,curr.w,curr.h);
+    const lap=new Float32Array(curr.data.length);
+    for(let i=0;i<curr.data.length;i++)lap[i]=curr.data[i]-up[i];
+    pyr.push({lap,w:curr.w,h:curr.h});
+  }
+  const base=gauss[PYRAMID_LEVELS-1];
+  pyr.push({lap:base.data,w:base.w,h:base.h});
+  return pyr;
+}
+
+function collapsePyramid(pyr){
+  let cur=pyr[PYRAMID_LEVELS-1].lap,cw=pyr[PYRAMID_LEVELS-1].w,ch=pyr[PYRAMID_LEVELS-1].h;
+  for(let lv=PYRAMID_LEVELS-2;lv>=0;lv--){
+    const up=upsample(cur,cw,ch,pyr[lv].w,pyr[lv].h);
+    const lap=pyr[lv].lap;
+    const out=new Float32Array(lap.length);
+    for(let i=0;i<lap.length;i++)out[i]=up[i]+lap[i];
+    cur=out;cw=pyr[lv].w;ch=pyr[lv].h;
+  }
+  return cur;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// STAGE 3: ADAPTIVE WEIGHT MAPS
+// Edge-aware + local variance + semantic signals combined.
+// ═══════════════════════════════════════════════════════════════
+function computeWeightMaps(aA,aB,w,h,mode,params){
+  const n=w*h;
+  const wA=new Float32Array(n);
+  const wB=new Float32Array(n);
+  const SB=[[0.5,0.5],[0.5,0.5],[0.4,0.6],[0.3,0.7],[0.6,0.4]];
+  const lowSrc=params.lowSrc||'A';
+  for(let i=0;i<n;i++){
+    const eA=aA.edgeMap[i],eB=aB.edgeMap[i];
+    const vA=aA.varMap[i], vB=aB.varMap[i];
+    const lA=aA.lumMap[i], lB=aB.lumMap[i];
+    const eT=eA+eB+1e-8,vT=vA+vB+1e-8;
+    const lcA=Math.abs(lA-0.5),lcB=Math.abs(lB-0.5),lcT=lcA+lcB+1e-8;
+    const eWA=eA/eT,eWB=eB/eT,vWA=vA/vT,vWB=vB/vT,lcWA=lcA/lcT,lcWB=lcB/lcT;
+    const dr=eA>eB?aA.regionMap[i]:aB.regionMap[i];
+    const[sbA,sbB]=SB[dr]||[0.5,0.5];
+    let wa,wb;
+    if(mode==='frequency'){
+      if(lowSrc==='A'){wa=0.5+0.3*(lcWA-0.5)-0.2*eWB;wb=1-wa;}
+      else{wb=0.5+0.3*(lcWB-0.5)-0.2*eWA;wa=1-wb;}
+    }else if(mode==='detail'){wb=0.4+0.4*eWB+0.2*vWB;wa=1-wb;}
+    else if(mode==='soft_light'||mode==='overlay'){wa=0.4*sbA+0.3*lcWA+0.3*vWA;wb=0.4*sbB+0.3*lcWB+0.3*vWB;}
+    else if(mode==='screen'){wa=0.3*sbA+0.4*lcWA+0.3*eWA;wb=0.3*sbB+0.4*lcWB+0.3*eWB;}
+    else if(mode==='hsl'){wa=0.3*sbA+0.4*vWA+0.3*lcWA;wb=0.3*sbB+0.4*vWB+0.3*lcWB;}
+    else{wa=0.34*sbA+0.33*eWA+0.33*vWA;wb=0.34*sbB+0.33*eWB+0.33*vWB;}
+    const t=wa+wb+1e-8;wA[i]=wa/t;wB[i]=wb/t;
+  }
+  return{wA,wB};
+}
+
+// ═══════════════════════════════════════════════════════════════
+// STAGE 4: PYRAMID FUSION
+// ═══════════════════════════════════════════════════════════════
+function fusePyramids(pyrA,pyrB,wA,wB,w,h,mode,params){
+  const fusedPyr=[];
+  for(let lv=0;lv<PYRAMID_LEVELS;lv++){
+    const levA=pyrA[lv],levB=pyrB[lv];
+    const lw=levA.w,lh=levA.h,ln=lw*lh;
+    let levelWA,levelWB;
+    if(lv===0){levelWA=wA;levelWB=wB;}
+    else{
+      levelWA=new Float32Array(ln);levelWB=new Float32Array(ln);
+      const scX=w/lw,scY=h/lh;
+      for(let y=0;y<lh;y++){for(let x=0;x<lw;x++){
+        let sa=0,sb=0,cnt=0;
+        const x0=Math.floor(x*scX),x1=Math.min(w-1,Math.ceil((x+1)*scX));
+        const y0=Math.floor(y*scY),y1=Math.min(h-1,Math.ceil((y+1)*scY));
+        for(let sy=y0;sy<=y1;sy++){for(let sx=x0;sx<=x1;sx++){sa+=wA[sy*w+sx];sb+=wB[sy*w+sx];cnt++;}}
+        levelWA[y*lw+x]=sa/cnt;levelWB[y*lw+x]=sb/cnt;
+      }}
+    }
+    const dA=levA.lap,dB=levB.lap;
+    const fused=new Float32Array(lw*lh*3);
+    if(lv<PYRAMID_LEVELS-1){
+      for(let i=0;i<ln;i++){
+        const p=i*3,wa=levelWA[i],wb=levelWB[i];
+        fused[p]=dA[p]*wa+dB[p]*wb;fused[p+1]=dA[p+1]*wa+dB[p+1]*wb;fused[p+2]=dA[p+2]*wa+dB[p+2]*wb;
+      }
+    }else{
+      const alpha=params.alpha||0.5;
+      for(let i=0;i<ln;i++){
+        const p=i*3,wa=levelWA[i],wb=levelWB[i];
+        const ra=dA[p],ga=dA[p+1],ba=dA[p+2],rb=dB[p],gb=dB[p+1],bb=dB[p+2];
+        let r,g,b;
+        if(mode==='multiply'){r=ra*rb;g=ga*gb;b=ba*bb;}
+        else if(mode==='screen'){r=1-(1-ra)*(1-rb);g=1-(1-ga)*(1-gb);b=1-(1-ba)*(1-bb);}
+        else if(mode==='overlay'){const ov=(a,bv)=>a<0.5?2*a*bv:1-2*(1-a)*(1-bv);r=ov(ra,rb);g=ov(ga,gb);b=ov(ba,bb);}
+        else if(mode==='soft_light'){const sl=(a,bv)=>bv<0.5?a-(1-2*bv)*a*(1-a):a+(2*bv-1)*(Math.sqrt(Math.max(0,a))-a);r=sl(ra,rb);g=sl(ga,gb);b=sl(ba,bb);}
+        else if(mode==='difference'){r=Math.abs(ra-rb);g=Math.abs(ga-gb);b=Math.abs(ba-bb);}
+        else if(mode==='normal'){r=ra*(1-alpha)+rb*alpha;g=ga*(1-alpha)+gb*alpha;b=ba*(1-alpha)+bb*alpha;}
+        else{r=ra*wa+rb*wb;g=ga*wa+gb*wb;b=ba*wa+bb*wb;}
+        fused[p]  =r*0.7+(ra*wa+rb*wb)*0.3;
+        fused[p+1]=g*0.7+(ga*wa+gb*wb)*0.3;
+        fused[p+2]=b*0.7+(ba*wa+bb*wb)*0.3;
+      }
+    }
+    fusedPyr.push({lap:fused,w:lw,h:lh});
+  }
+  return fusedPyr;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// STAGE 5: HSL CHROMA CORRECTION
+// ═══════════════════════════════════════════════════════════════
+function rgbToHsl(r,g,b){
+  const mx=Math.max(r,g,b),mn=Math.min(r,g,b),l=(mx+mn)/2;
+  if(mx===mn)return[0,0,l];
+  const d=mx-mn,s=l>0.5?d/(2-mx-mn):d/(mx+mn);
+  let h=0;
+  if(mx===r)h=((g-b)/d+(g<b?6:0))/6;
+  else if(mx===g)h=((b-r)/d+2)/6;
+  else h=((r-g)/d+4)/6;
+  return[h,s,l];
+}
+function hslToRgb(h,s,l){
+  if(s===0)return[l,l,l];
+  const q=l<0.5?l*(1+s):l+s-l*s,p=2*l-q;
+  const hf=(p,q,t)=>{if(t<0)t+=1;if(t>1)t-=1;if(t<1/6)return p+(q-p)*6*t;if(t<1/2)return q;if(t<2/3)return p+(q-p)*(2/3-t)*6;return p;};
+  return[hf(p,q,h+1/3),hf(p,q,h),hf(p,q,h-1/3)];
+}
+
+function hslChromaPass(fused,linA,linB,wA,wB,n,amount){
+  if(amount<=0)return fused;
+  const out=new Float32Array(n*3);
+  for(let i=0;i<n;i++){
+    const p=i*3;
+    const[hF,sF,lF]=rgbToHsl(fused[p],fused[p+1],fused[p+2]);
+    const[hA,sA]=rgbToHsl(linA[p],linA[p+1],linA[p+2]);
+    const[hB,sB]=rgbToHsl(linB[p],linB[p+1],linB[p+2]);
+    let dh=hB-hA;if(dh>0.5)dh-=1;if(dh<-0.5)dh+=1;
+    const hBlend=(hA+dh*wB[i]+1)%1;
+    const sBlend=Math.min(1,(sA*wA[i]+sB*wB[i])*1.08);
+    const hOut=hF*(1-amount)+hBlend*amount;
+    const sOut=sF*(1-amount)+sBlend*amount;
+    const[rO,gO,bO]=hslToRgb(hOut,sOut,lF);
+    out[p]=Math.max(0,Math.min(1,rO));out[p+1]=Math.max(0,Math.min(1,gO));out[p+2]=Math.max(0,Math.min(1,bO));
+  }
+  return out;
+}
+
+// ── Unsharp mask ──────────────────────────────────────────────
+function unsharpMask(lin,w,h,amount){
+  const blurred=gaussBlur(lin,w,h,1.2);
+  const out=new Float32Array(lin.length);
+  for(let i=0;i<lin.length;i++)out[i]=Math.max(0,Math.min(1,lin[i]+amount*(lin[i]-blurred[i])));
+  return out;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// DIRECT BLEND — non-pyramid modes with adaptive weights
+// ═══════════════════════════════════════════════════════════════
+function blendDirect(linA,linB,wA,wB,n,mode,params){
+  const out=new Float32Array(n*3);
+  const atA=new Float32Array(n);
+  const atB=new Float32Array(n);
+  const alpha=params.alpha||0.5;
+  for(let i=0;i<n;i++){
+    const p=i*3,wa=wA[i],wb=wB[i];
+    const ra=linA[p],ga=linA[p+1],ba=linA[p+2];
+    const rb=linB[p],gb=linB[p+1],bb=linB[p+2];
+    let r,g,b;
+    if(mode==='normal'){r=ra*(1-alpha)+rb*alpha;g=ga*(1-alpha)+gb*alpha;b=ba*(1-alpha)+bb*alpha;}
+    else if(mode==='multiply'){r=ra*rb;g=ga*gb;b=ba*bb;}
+    else if(mode==='difference'){r=Math.abs(ra-rb);g=Math.abs(ga-gb);b=Math.abs(ba-bb);}
+    else if(mode==='detail'){r=rb*wb+ra*wa;g=gb*wb+ga*wa;b=bb*wb+ba*wa;}
+    else{r=ra*wa+rb*wb;g=ga*wa+gb*wb;b=ba*wa+bb*wb;}
+    out[p]  =Math.max(0,Math.min(1,r*0.75+(ra*wa+rb*wb)*0.25));
+    out[p+1]=Math.max(0,Math.min(1,g*0.75+(ga*wa+gb*wb)*0.25));
+    out[p+2]=Math.max(0,Math.min(1,b*0.75+(ba*wa+bb*wb)*0.25));
+    atA[i]=wa;atB[i]=wb;
+  }
+  return{out,atA,atB};
+}
+
+// ═══════════════════════════════════════════════════════════════
+// MAIN WORKER HANDLER
+// Pyramid path: frequency hsl soft_light overlay screen
+// Direct path:  normal multiply difference detail
+// All share: Lanczos + linearise + analyse + weights + sharpen
+// ═══════════════════════════════════════════════════════════════
+self.onmessage=function(e){
+  const{rgbaA,rgbaB,sw,sh,dw,dh,mode,params,unsharpAmount}=e.data;
+  const n=dw*dh;
+
+  self.postMessage({type:'progress',pct:5, text:'Lanczos resampling A\u2026'});
+  const resA=lanczosResize(rgbaA,sw,sh,dw,dh);
+
+  self.postMessage({type:'progress',pct:15,text:'Lanczos resampling B\u2026'});
+  const resB=lanczosResize(rgbaB,sw,sh,dw,dh);
+
+  self.postMessage({type:'progress',pct:25,text:'linearising RGB\u2026'});
+  const linA=toLinearBuf(resA,n);
+  const linB=toLinearBuf(resB,n);
+
+  self.postMessage({type:'progress',pct:33,text:'analysing scene A\u2026'});
+  const aA=analyseScene(linA,dw,dh);
+
+  self.postMessage({type:'progress',pct:41,text:'analysing scene B\u2026'});
+  const aB=analyseScene(linB,dw,dh);
+
+  self.postMessage({type:'progress',pct:48,text:'computing adaptive weights\u2026'});
+  const{wA,wB}=computeWeightMaps(aA,aB,dw,dh,mode,params);
+
+  const usePyramid=['frequency','hsl','soft_light','overlay','screen'].includes(mode);
+  let fused,atA,atB;
+
+  if(usePyramid){
+    self.postMessage({type:'progress',pct:54,text:'building Laplacian pyramids\u2026'});
+    const pyrA=buildPyramid(linA,dw,dh);
+    const pyrB=buildPyramid(linB,dw,dh);
+
+    self.postMessage({type:'progress',pct:68,text:'fusing pyramid levels\u2026'});
+    const fp=fusePyramids(pyrA,pyrB,wA,wB,dw,dh,mode,params);
+
+    self.postMessage({type:'progress',pct:78,text:'collapsing pyramid\u2026'});
+    const collapsed=collapsePyramid(fp);
+    for(let i=0;i<collapsed.length;i++)collapsed[i]=Math.max(0,Math.min(1,collapsed[i]));
+
+    self.postMessage({type:'progress',pct:84,text:'HSL chroma correction\u2026'});
+    const ca=mode==='hsl'?0.7:0.35;
+    fused=hslChromaPass(collapsed,linA,linB,wA,wB,n,ca);
+    atA=wA;atB=wB;
+  }else{
+    self.postMessage({type:'progress',pct:58,text:'blending\u2026'});
+    const result=blendDirect(linA,linB,wA,wB,n,mode,params);
+    fused=result.out;atA=result.atA;atB=result.atB;
+
+    self.postMessage({type:'progress',pct:76,text:'colour harmonisation\u2026'});
+    fused=hslChromaPass(fused,linA,linB,wA,wB,n,0.2);
+  }
+
+  self.postMessage({type:'progress',pct:88,text:'unsharp mask\u2026'});
+  const sharpened=unsharpAmount>0?unsharpMask(fused,dw,dh,unsharpAmount*0.45):fused;
+
+  self.postMessage({type:'progress',pct:94,text:'encoding sRGB\u2026'});
+  const rgba=toSRGBBuf(sharpened,n);
+  const rgbaAout=toSRGBBuf(linA,n);
+  const rgbaBout=toSRGBBuf(linB,n);
+
+  self.postMessage({type:'done',rgba,rgbaAout,rgbaBout,atA,atB,dw,dh},
+    [rgba.buffer,rgbaAout.buffer,rgbaBout.buffer,atA.buffer,atB.buffer]);
+};
+`;
+
+// ─────────────────────────────────────────────────────────────
+// MAIN THREAD
+// ─────────────────────────────────────────────────────────────
+const S={
+  imgA:null,imgB:null,
+  resA:null,resB:null,
+  outData:null,attrA:null,attrB:null,
+  w:0,h:0,lowSrc:'A',
+  busy:false,timer:null,worker:null,
+};
+
+function setStatus(m){document.getElementById('statusMsg').textContent=m;}
+function setRight(m){document.getElementById('statusRight').textContent=m;}
+function setProgress(pct,text){
+  document.getElementById('progressBar').style.width=pct+'%';
+  if(text)document.getElementById('loadingText').textContent=text;
+}
+const WORKER='https://pixelcomposer-api.pixelcomposerapp.workers.dev';
+let _uid=localStorage.getItem('pc_uid');
+if(!_uid){_uid=crypto.randomUUID();localStorage.setItem('pc_uid',_uid);}
+const _ref=new URLSearchParams(location.search).get('ref')||document.referrer.slice(0,128)||'';
+function track(event){
+  fetch(WORKER+'/track',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({uid:_uid,event,ref:_ref})}).catch(()=>{});
+}
+track('page_open');
+
+// Load image — store FULL original resolution, only scale preview
+function loadFromFile(file,slot){
+  const reader=new FileReader();
+  reader.onload=e=>{
+    const img=new Image();
+    img.onload=()=>{
+      // Full-res offscreen — no MAX cap
+      const off=document.createElement('canvas');
+      off.width=img.naturalWidth; off.height=img.naturalHeight;
+      off.getContext('2d').drawImage(img,0,0);
+      const data=off.getContext('2d').getImageData(0,0,off.width,off.height);
+      if(slot==='A') S.imgA=data; else S.imgB=data;
+
+      // Preview only — separate canvas, scaled down for display
+      const pv=document.getElementById('canvas'+slot);
+      const dz=document.getElementById('drop'+slot);
+      const scale=Math.min(1,(dz.clientWidth-4)/img.naturalWidth,(dz.clientHeight-4)/img.naturalHeight);
+      pv.width=Math.round(img.naturalWidth*scale);
+      pv.height=Math.round(img.naturalHeight*scale);
+      pv.getContext('2d').drawImage(img,0,0,pv.width,pv.height);
+      pv.style.display='block';
+      document.getElementById('hint'+slot).style.display='none';
+      document.getElementById('drop'+slot).classList.add('loaded');
+      document.getElementById('info'+slot).textContent=`${img.naturalWidth}×${img.naturalHeight}`;
+      setStatus(`image ${slot} loaded — ${img.naturalWidth}×${img.naturalHeight} (full resolution preserved)`);
+      track('image_upload');
+      stopExample();
+      checkResWarn();
+      scheduleCompose();
+    };
+    img.src=e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+document.getElementById('fileA').addEventListener('change',e=>{if(e.target.files[0])loadFromFile(e.target.files[0],'A');});
+document.getElementById('fileB').addEventListener('change',e=>{if(e.target.files[0])loadFromFile(e.target.files[0],'B');});
+
+function onDrag(e,slot){e.preventDefault();document.getElementById('drop'+slot).classList.add('drag-over');}
+function offDrag(slot){document.getElementById('drop'+slot).classList.remove('drag-over');}
+function onDrop(e,slot){
+  e.preventDefault();offDrag(slot);
+  const f=e.dataTransfer.files[0];
+  if(f&&f.type.startsWith('image/'))loadFromFile(f,slot);
+}
+
+function swapImages(){
+  if(!S.imgA&&!S.imgB)return;
+  [S.imgA,S.imgB]=[S.imgB,S.imgA];
+  const cA=document.getElementById('canvasA');
+  const cB=document.getElementById('canvasB');
+  const hA=document.getElementById('hintA');
+  const hB=document.getElementById('hintB');
+  const iA=document.getElementById('infoA');
+  const iB=document.getElementById('infoB');
+  // Swap canvas pixels
+  const tmpCanvas=document.createElement('canvas');
+  tmpCanvas.width=cA.width;tmpCanvas.height=cA.height;
+  tmpCanvas.getContext('2d').drawImage(cA,0,0);
+  cA.width=cB.width;cA.height=cB.height;
+  cA.getContext('2d').drawImage(cB,0,0);
+  cB.width=tmpCanvas.width;cB.height=tmpCanvas.height;
+  cB.getContext('2d').drawImage(tmpCanvas,0,0);
+  // Swap visibility
+  const aLoaded=S.imgA!=null;const bLoaded=S.imgB!=null;
+  cA.style.display=aLoaded?'block':'none';
+  cB.style.display=bLoaded?'block':'none';
+  hA.style.display=aLoaded?'none':'block';
+  hB.style.display=bLoaded?'none':'block';
+  // Swap info text
+  const tmp=iA.textContent;iA.textContent=iB.textContent;iB.textContent=tmp;
+  scheduleCompose();
+}
+
+// Resolution
+function getTargetRes(){
+  const mode=document.getElementById('resolutionSelect').value;
+  const map={hd:{width:1280,height:720},fhd:{width:1920,height:1080},qhd:{width:2560,height:1440},'4k':{width:3840,height:2160},square:{width:1080,height:1080}};
+  if(map[mode])return map[mode];
+  if(mode==='original'){
+    const w=Math.max(S.imgA?S.imgA.width:0,S.imgB?S.imgB.width:0)||1920;
+    const h=Math.max(S.imgA?S.imgA.height:0,S.imgB?S.imgB.height:0)||1080;
+    return{width:w,height:h};
+  }
+  return{
+    width:Math.max(64,parseInt(document.getElementById('customWidth').value)||1920),
+    height:Math.max(64,parseInt(document.getElementById('customHeight').value)||1080),
+  };
+}
+
+function checkResWarn(){
+  if(!S.imgA||!S.imgB)return;
+  const{width:dw,height:dh}=getTargetRes();
+  const srcW=Math.max(S.imgA.width,S.imgB.width);
+  const srcH=Math.max(S.imgA.height,S.imgB.height);
+  document.getElementById('resWarn').style.display=(dw>srcW||dh>srcH)?'block':'none';
+}
+
+// Normalise both inputs to same size before sending to worker
+function normalise(imgData,tw,th){
+  if(imgData.width===tw&&imgData.height===th)return new Uint8ClampedArray(imgData.data);
+  const src=document.createElement('canvas');
+  src.width=imgData.width;src.height=imgData.height;
+  src.getContext('2d').putImageData(imgData,0,0);
+  const dst=document.createElement('canvas');dst.width=tw;dst.height=th;
+  const dctx=dst.getContext('2d');
+  dctx.imageSmoothingEnabled=true;dctx.imageSmoothingQuality='high';
+  dctx.drawImage(src,0,0,tw,th);
+  return new Uint8ClampedArray(dctx.getImageData(0,0,tw,th).data);
+}
+
+// Schedule compose with debounce
+function scheduleCompose(){
+  if(!S.imgA||!S.imgB)return;
+  clearTimeout(S.timer);
+  S.timer=setTimeout(compose,120);
+}
+
+function compose(){
+  if(!S.imgA||!S.imgB||S.busy)return;
+  S.busy=true;
+  track('compose');
+  if(S.worker){S.worker.terminate();S.worker=null;}
+
+  const overlay=document.getElementById('loadingOverlay');
+  overlay.classList.add('active');
+  setProgress(0,'preparing…');
+
+  const{width:dw,height:dh}=getTargetRes();
+  const mode=document.getElementById('modeSelect').value;
+  const sigma=parseFloat(document.getElementById('sigmaSlider').value);
+  const alpha=parseFloat(document.getElementById('alphaSlider').value)/100;
+  const unsharpAmount=parseFloat(document.getElementById('unsharpSlider').value)/100;
+
+  // Use the larger of the two inputs as the common source size
+  const srcW=Math.max(S.imgA.width,S.imgB.width);
+  const srcH=Math.max(S.imgA.height,S.imgB.height);
+
+  const normA=normalise(S.imgA,srcW,srcH);
+  const normB=normalise(S.imgB,srcW,srcH);
+
+  const blob=new Blob([WORKER_SRC],{type:'application/javascript'});
+  const url=URL.createObjectURL(blob);
+  S.worker=new Worker(url);
+
+  S.worker.onmessage=e=>{
+    const msg=e.data;
+    if(msg.type==='progress'){setProgress(msg.pct,msg.text);return;}
+    if(msg.type==='done'){
+      URL.revokeObjectURL(url);
+      const{rgba,rgbaAout,rgbaBout,atA,atB,dw:ow,dh:oh}=msg;
+      S.w=ow;S.h=oh;
+      S.outData=new ImageData(rgba,ow,oh);
+      S.resA=new ImageData(rgbaAout,ow,oh);
+      S.resB=new ImageData(rgbaBout,ow,oh);
+      S.attrA=atA;S.attrB=atB;
+
+      const c=document.getElementById('canvasOut');
+      c.width=ow;c.height=oh;
+      c.getContext('2d').putImageData(S.outData,0,0);
+      c.style.display='block';
+      document.getElementById('outPlaceholder').style.display='none';
+      document.getElementById('infoOut').textContent=`${ow}×${oh} · ${mode}`;
+      document.getElementById('inspMode').textContent=`linear RGB · ${mode}`;
+      document.getElementById('exportBtn').disabled=false;
+      setProgress(100,'done');
+      overlay.classList.remove('active');
+      S.busy=false;S.worker=null;
+      setStatus(`composed · ${mode} · ${ow}×${oh} · linear RGB · Lanczos-3`);
+      setRight(`src A:${S.imgA.width}×${S.imgA.height}  B:${S.imgB.width}×${S.imgB.height}  →  ${ow}×${oh}`);
+    }
+  };
+
+  S.worker.onerror=err=>{
+    setStatus(`error: ${err.message}`);
+    overlay.classList.remove('active');
+    S.busy=false;
+    URL.revokeObjectURL(url);
+  };
+
+  S.worker.postMessage({
+    rgbaA:normA,rgbaB:normB,
+    sw:srcW,sh:srcH,dw,dh,
+    mode,
+    params:{alpha,sigma,lowSrc:S.lowSrc},
+    unsharpAmount,
+  },[normA.buffer,normB.buffer]);
+}
+
+// Inspector
+document.getElementById('canvasOut').addEventListener('mousemove',inspectPx);
+document.getElementById('canvasOut').addEventListener('click',inspectPx);
+
+function inspectPx(e){
+  if(!S.outData||!S.resA||!S.resB)return;
+  const c=document.getElementById('canvasOut');
+  const rect=c.getBoundingClientRect();
+  const x=Math.floor((e.clientX-rect.left)*c.width/rect.width);
+  const y=Math.floor((e.clientY-rect.top)*c.height/rect.height);
+  if(x<0||y<0||x>=S.w||y>=S.h)return;
+  document.getElementById('inspCoord').textContent=`x:${x}  y:${y}`;
+  const idx=(y*S.w+x)*4;
+  const px=(data,sw,vl)=>{
+    const r=data[idx],g=data[idx+1],b=data[idx+2];
+    const hex=`#${r.toString(16).padStart(2,'0')}${g.toString(16).padStart(2,'0')}${b.toString(16).padStart(2,'0')}`;
+    document.getElementById(sw).style.background=hex;
+    document.getElementById(vl).textContent=`rgb(${r},${g},${b})`;
+  };
+  px(S.resA.data,'swatchA','valA');
+  px(S.resB.data,'swatchB','valB');
+  px(S.outData.data,'swatchOut','valOut');
+  const pi=y*S.w+x;
+  if(S.attrA&&S.attrB){
+    document.getElementById('contribA').textContent=(S.attrA[pi]*100).toFixed(1)+'%';
+    document.getElementById('contribB').textContent=(S.attrB[pi]*100).toFixed(1)+'%';
+  }
+}
+
+// Controls
+function setLowSrc(src){
+  S.lowSrc=src;
+  document.getElementById('btnLowA').classList.toggle('active',src==='A');
+  document.getElementById('btnLowB').classList.toggle('active',src==='B');
+  scheduleCompose();
+}
+document.getElementById('modeSelect').addEventListener('change',()=>{
+  const m=document.getElementById('modeSelect').value;
+  document.getElementById('freqControls').style.display=m==='frequency'?'block':'none';
+  document.getElementById('alphaControls').style.display=m==='normal'?'block':'none';
+  scheduleCompose();
+});
+({
+  sigmaSlider:['sigmaDisplay',''],
+  alphaSlider:['alphaDisplay','%'],
+  unsharpSlider:['unsharpDisplay','%'],
+}||({}));
+[['sigmaSlider','sigmaDisplay',''],['alphaSlider','alphaDisplay','%'],['unsharpSlider','unsharpDisplay','%']].forEach(([id,disp,suf])=>{
+  document.getElementById(id).addEventListener('input',function(){
+    document.getElementById(disp).textContent=this.value+suf;
+    scheduleCompose();
+  });
+});
+document.getElementById('resolutionSelect').addEventListener('change',function(){
+  document.getElementById('customBox').style.display=this.value==='custom'?'flex':'none';
+  checkResWarn();scheduleCompose();
+});
+['customWidth','customHeight'].forEach(id=>{
+  document.getElementById(id).addEventListener('input',()=>{checkResWarn();scheduleCompose();});
+});
+
+// Export
+document.getElementById('exportBtn').addEventListener('click',()=>{
+  if(!S.outData)return;
+  const c=document.createElement('canvas');c.width=S.w;c.height=S.h;
+  c.getContext('2d').putImageData(S.outData,0,0);
+  const a=document.createElement('a');
+  a.href=c.toDataURL('image/png');
+  a.download=`pixelcomposer_${S.w}x${S.h}.png`;
+  a.click();
+  track('export');
+  setStatus(`exported · ${S.w}×${S.h} PNG`);
+});
+
+// ── Example loop ──────────────────────────────────────────────
+const EX = {
+  running: true,
+  frame: 0,
+  timer: null,
+  t: 0,
+  paused: false,
+};
+
+// Generate procedural gradient pair and blend them on the example canvas
+function exampleTick() {
+  if (!EX.running || EX.paused) return;
+  const c = document.getElementById('exampleCanvas');
+  const ctx = c.getContext('2d');
+  const w = c.width, h = c.height;
+  EX.t += 0.012;
+  const t = EX.t;
+
+  // Image A — shifting gradient
+  const gA = ctx.createLinearGradient(
+    w * (0.5 + 0.5 * Math.sin(t)),
+    0,
+    w * (0.5 + 0.5 * Math.cos(t * 0.7)),
+    h
+  );
+  const hA = (t * 40) % 360;
+  gA.addColorStop(0, `hsl(${hA},90%,55%)`);
+  gA.addColorStop(1, `hsl(${hA + 120},90%,35%)`);
+
+  // Image B — complementary gradient
+  const gB = ctx.createLinearGradient(
+    0,
+    h * (0.5 + 0.4 * Math.sin(t * 0.8 + 1)),
+    w,
+    h * (0.5 + 0.4 * Math.cos(t * 0.6))
+  );
+  const hB = (hA + 180) % 360;
+  gB.addColorStop(0, `hsl(${hB},85%,50%)`);
+  gB.addColorStop(1, `hsl(${hB + 80},85%,30%)`);
+
+  // Draw A
+  const offA = document.createElement('canvas');
+  offA.width = w; offA.height = h;
+  const ctxA = offA.getContext('2d');
+  ctxA.fillStyle = gA; ctxA.fillRect(0, 0, w, h);
+
+  // Draw B
+  const offB = document.createElement('canvas');
+  offB.width = w; offB.height = h;
+  const ctxB = offB.getContext('2d');
+  ctxB.fillStyle = gB; ctxB.fillRect(0, 0, w, h);
+
+  // Blend using soft light in canvas
+  ctx.clearRect(0, 0, w, h);
+  ctx.drawImage(offA, 0, 0);
+  ctx.globalCompositeOperation = 'soft-light';
+  ctx.drawImage(offB, 0, 0);
+  ctx.globalCompositeOperation = 'source-over';
+
+  // Mode label cycling
+  const modes = ['soft light','screen','overlay','hsl blend','frequency'];
+  const modeIdx = Math.floor(t / 2) % modes.length;
+  document.getElementById('exampleLabel').textContent =
+    `mode: ${modes[modeIdx]} — upload two images to try it yourself ↑`;
+
+  EX.frame++;
+}
+
+function toggleExample() {
+  EX.paused = !EX.paused;
+  const hint = document.querySelector('#exampleWidget span:last-of-type');
+  if (hint) hint.textContent = EX.paused
+    ? 'example — click to resume'
+    : 'example — click to pause';
+}
+
+function stopExample() {
+  EX.paused = true;
+  document.getElementById('exampleWidget').style.opacity = '0.4';
+}
+
+EX.timer = setInterval(exampleTick, 40); // ~25fps
+
+// Init
+document.getElementById('freqControls').style.display='none';
+document.getElementById('alphaControls').style.display='none';
+setStatus('load two images to begin');
+
+// ── Feedback modal ────────────────────────────────────────────
+let fbRating=0;
+function openFeedback(){
+  fbRating=0;
+  document.getElementById('fbText').value='';
+  document.getElementById('fbThanks').style.display='none';
+  document.getElementById('fbForm').style.display='flex';
+  document.querySelectorAll('.fb-star').forEach(s=>s.classList.remove('active'));
+  document.getElementById('fbOverlay').classList.add('active');
+}
+function closeFeedback(){document.getElementById('fbOverlay').classList.remove('active');}
+function setRating(n){
+  fbRating=n;
+  document.querySelectorAll('.fb-star').forEach((s,i)=>s.classList.toggle('active',i<n));
+}
+function submitFeedback(){
+  const text=document.getElementById('fbText').value.trim();
+  if(!text&&!fbRating)return;
+  document.getElementById('fbSubmit').disabled=true;
+  const WORKER='https://pixelcomposer-api.pixelcomposerapp.workers.dev';
+  fetch(WORKER+'/feedback',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({rating:fbRating,message:text||'',uid:_uid})
+  })
+  .then(r=>r.json())
+  .catch(()=>({ok:false}));
+  document.getElementById('fbForm').style.display='none';
+  document.getElementById('fbThanks').style.display='block';
+  document.getElementById('fbSubmit').disabled=false;
+  setTimeout(closeFeedback,1800);
+}
+</script>
+
+<div class="fb-overlay" id="fbOverlay" onclick="if(event.target===this)closeFeedback()">
+  <div class="fb-modal">
+    <div class="fb-title">rate PixelComposer</div>
+    <div class="fb-subtitle">takes 10 seconds · helps a lot</div>
+    <div class="fb-stars">
+      <span class="fb-star" onclick="setRating(1)">★</span>
+      <span class="fb-star" onclick="setRating(2)">★</span>
+      <span class="fb-star" onclick="setRating(3)">★</span>
+      <span class="fb-star" onclick="setRating(4)">★</span>
+      <span class="fb-star" onclick="setRating(5)">★</span>
+    </div>
+    <div id="fbForm" style="display:flex;flex-direction:column;gap:10px;">
+      <textarea class="fb-textarea" id="fbText" placeholder="what works, what doesn't, what you'd add…"></textarea>
+      <div class="fb-row">
+        <button class="fb-cancel" onclick="closeFeedback()">cancel</button>
+        <button class="fb-submit" id="fbSubmit" onclick="submitFeedback()">send feedback</button>
+      </div>
+    </div>
+    <div class="fb-thanks" id="fbThanks">✓ thank you — feedback received</div>
+  </div>
+</div>
+</body>
+</html>
