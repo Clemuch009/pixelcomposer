@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-GS6C4PB6QT"></script>
+   <script async src="https://www.googletagmanager.com/gtag/js?id=G-GS6C4PB6QT"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
@@ -15,36 +15,24 @@
 <style>
 :root{
   --bg:#0D0D0F;--panel:#141416;--card:#1C1C1F;--border:#262629;
-  --accent:#FF5533;--text:#EFEFEF;--muted:#66666E;--radius:6px;
-  --font:'JetBrains Mono','Fira Code','Courier New',monospace;
+  --accent:#FF5533;--text:#EFEFEF;--muted:#66666E;--dim:#333338;
+  --radius:6px;--font:'JetBrains Mono','Fira Code','Courier New',monospace;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
-body{background:var(--bg);color:var(--text);font-family:var(--font);overflow:hidden;}
-.topbar{height:44px;border-bottom:1px solid var(--border);background:var(--panel);display:flex;align-items:center;justify-content:space-between;padding:0 16px;font-size:12px;letter-spacing:1px;}
-.logo{font-weight:700;}
-.tag{color:var(--muted);font-size:11px;}
-.feedback-btn{background:#166534;border:1px solid #16a34a;color:#bbf7d0;padding:5px 14px;border-radius:var(--radius);cursor:pointer;font-family:var(--font);font-size:11px;letter-spacing:0.5px;transition:background 0.15s,border-color 0.15s;font-weight:600;}
-.feedback-btn:hover{background:#15803d;border-color:#22c55e;}
-.fb-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:1000;display:none;align-items:center;justify-content:center;}
-.fb-overlay.active{display:flex;}
-.fb-modal{background:#1C1C1F;border:1px solid #262629;border-radius:10px;padding:24px;width:380px;max-width:95vw;display:flex;flex-direction:column;gap:14px;}
-.fb-title{font-size:13px;font-weight:700;color:#EFEFEF;letter-spacing:0.5px;}
-.fb-subtitle{font-size:11px;color:#66666E;margin-top:-8px;}
-.fb-stars{display:flex;gap:6px;}
-.fb-star{font-size:22px;cursor:pointer;opacity:0.35;transition:opacity 0.1s,transform 0.1s;user-select:none;}
-.fb-star.active{opacity:1;}
-.fb-star:hover{transform:scale(1.2);}
-.fb-textarea{width:100%;background:#141416;border:1px solid #262629;color:#EFEFEF;padding:10px;border-radius:6px;font-family:'JetBrains Mono','Fira Code','Courier New',monospace;font-size:11px;resize:vertical;min-height:90px;outline:none;}
-.fb-textarea:focus{border-color:#66666E;}
-.fb-row{display:flex;gap:8px;justify-content:flex-end;}
-.fb-cancel{background:transparent;border:1px solid #262629;color:#66666E;padding:7px 16px;border-radius:6px;cursor:pointer;font-family:inherit;font-size:11px;}
-.fb-cancel:hover{border-color:#66666E;color:#EFEFEF;}
-.fb-submit{background:#166534;border:1px solid #16a34a;color:#bbf7d0;padding:7px 16px;border-radius:6px;cursor:pointer;font-family:inherit;font-size:11px;font-weight:600;}
-.fb-submit:hover{background:#15803d;}
-.fb-submit:disabled{opacity:0.4;cursor:not-allowed;}
-.fb-thanks{font-size:12px;color:#86efac;text-align:center;display:none;}
-.root{display:grid;grid-template-columns:260px 1fr;height:calc(100vh - 44px - 32px);}
-.sidebar{background:var(--panel);border-right:1px solid var(--border);padding:14px;overflow-y:auto;display:flex;flex-direction:column;gap:12px;}
+body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:12px;overflow:hidden;height:100vh;display:flex;flex-direction:column;}
+
+/* ── Topbar ── */
+.topbar{height:44px;border-bottom:1px solid var(--border);background:var(--panel);display:flex;align-items:center;justify-content:space-between;padding:0 16px;flex-shrink:0;}
+.logo{font-weight:700;font-size:13px;letter-spacing:2px;}
+.tag{color:var(--muted);font-size:10px;}
+.feedback-btn{background:#166534;border:1px solid #16a34a;color:#bbf7d0;padding:5px 14px;border-radius:var(--radius);cursor:pointer;font-family:var(--font);font-size:11px;font-weight:600;transition:background 0.15s;}
+.feedback-btn:hover{background:#15803d;}
+
+/* ── 3-zone root layout ── */
+.workspace{flex:1;display:grid;grid-template-columns:220px 1fr 260px;grid-template-rows:1fr;overflow:hidden;position:relative;}
+
+/* ── LEFT PANEL ── */
+.left-panel{background:var(--panel);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:14px 12px;gap:12px;overflow-y:auto;z-index:2;}
 .sec-label{font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;}
 .sep{height:1px;background:var(--border);}
 select{width:100%;background:var(--card);border:1px solid var(--border);color:var(--text);padding:7px 8px;border-radius:var(--radius);font-family:var(--font);font-size:11px;cursor:pointer;}
@@ -54,75 +42,144 @@ select:focus{outline:none;border-color:var(--muted);}
 .slider-hdr span:first-child{font-size:10px;color:var(--muted);}
 .slider-hdr span:last-child{font-size:11px;color:var(--accent);font-weight:600;}
 input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer;}
-.custom-box{display:none;flex-direction:column;gap:6px;margin-top:6px;}
-.custom-box input[type=number]{width:100%;background:var(--card);border:1px solid var(--border);color:var(--text);padding:7px 8px;border-radius:var(--radius);font-family:var(--font);font-size:11px;}
-.btn{width:100%;background:var(--card);border:1px solid var(--border);color:var(--text);padding:9px;border-radius:var(--radius);cursor:pointer;font-family:var(--font);font-size:11px;transition:border-color 0.15s;}
-.btn:hover{border-color:var(--accent);}
-.btn.primary{background:var(--accent);border-color:var(--accent);color:white;font-weight:600;}
-.btn.primary:hover{background:#ff6644;}
-.btn:disabled{opacity:0.35;cursor:not-allowed;pointer-events:none;}
+.hint{font-size:10px;color:#F59E0B;margin-top:4px;}
 .btn-row{display:flex;gap:6px;}
-.btn-row .btn{flex:1;}
+.btn{background:var(--card);border:1px solid var(--border);color:var(--text);padding:7px 10px;border-radius:var(--radius);cursor:pointer;font-family:var(--font);font-size:11px;transition:border-color 0.15s;width:100%;}
+.btn:hover{border-color:var(--accent);}
 .btn.active{border-color:var(--accent);color:var(--accent);}
-.main{padding:12px;overflow:hidden;display:flex;flex-direction:column;gap:10px;}
-.panels{flex:1;display:grid;grid-template-columns:1fr 32px 1fr 1fr;gap:10px;min-height:0;}
-.panel{display:flex;flex-direction:column;gap:5px;min-height:0;}
-.panel-hdr{display:flex;align-items:center;justify-content:space-between;}
-.panel-hdr .sec-label{margin-bottom:0;}
-.panel-info{font-size:10px;color:var(--muted);}
-.drop-zone{flex:1;min-height:0;background:var(--card);border:1px dashed var(--border);border-radius:var(--radius);overflow:hidden;position:relative;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:border-color 0.15s,background 0.15s;}
-.drop-zone:hover{border-color:var(--accent);}
-.drop-zone.drag-over{border-color:#3B82F6;background:#161626;border-style:solid;}
-.drop-zone.loaded{border-style:solid;border-color:var(--border);}
-.drop-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;}
-.drop-zone canvas{width:100%;height:100%;object-fit:contain;display:none;}
-.placeholder{color:var(--muted);font-size:11px;text-align:center;padding:16px;pointer-events:none;}
-.placeholder svg{width:26px;height:26px;opacity:0.3;display:block;margin:0 auto 8px;}
-.output-wrap{flex:1;min-height:0;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;position:relative;display:flex;align-items:center;justify-content:center;}
+.custom-box{display:none;flex-direction:column;gap:6px;margin-top:4px;}
+.custom-box input[type=number]{width:100%;background:var(--card);border:1px solid var(--border);color:var(--text);padding:7px 8px;border-radius:var(--radius);font-family:var(--font);font-size:11px;}
+.res-warn{font-size:10px;color:#F59E0B;margin-top:4px;display:none;}
+.download-btn{background:var(--accent);border:none;color:white;padding:10px;border-radius:var(--radius);cursor:pointer;font-family:var(--font);font-size:12px;font-weight:700;letter-spacing:1px;width:100%;transition:background 0.15s;}
+.download-btn:hover{background:#ff6644;}
+.download-btn:disabled{opacity:0.35;cursor:not-allowed;}
+
+/* ── CENTER STAGE ── */
+.center-stage{position:relative;display:flex;flex-direction:column;overflow:hidden;}
+
+/* Background memory layer */
+.bg-memory{position:absolute;inset:0;pointer-events:none;z-index:0;overflow:hidden;}
+.bg-memory-item{position:absolute;opacity:0.06;filter:blur(28px);border-radius:8px;object-fit:cover;transition:opacity 1s;}
+
+/* Pipeline view */
+.pipeline{flex:1;display:flex;flex-direction:column;z-index:1;padding:14px;gap:10px;min-height:0;}
+.pipeline-flow{display:grid;grid-template-columns:1fr 28px 1fr 28px 1fr;gap:0;align-items:stretch;flex-shrink:0;height:160px;}
+.pipe-panel{display:flex;flex-direction:column;gap:4px;}
+.pipe-label{font-size:10px;color:var(--muted);letter-spacing:1px;text-align:center;}
+.pipe-img{flex:1;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;position:relative;display:flex;align-items:center;justify-content:center;}
+.pipe-img canvas{width:100%;height:100%;object-fit:contain;display:none;}
+.pipe-img .empty{color:var(--muted);font-size:10px;text-align:center;padding:8px;}
+.pipe-arrow{display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:16px;padding-top:16px;}
+
+/* Output (dominant) */
+.output-section{flex:1;display:flex;flex-direction:column;gap:6px;min-height:0;}
+.output-hdr{display:flex;align-items:center;justify-content:space-between;}
+.output-wrap{flex:1;min-height:0;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;position:relative;display:flex;align-items:center;justify-content:center;cursor:crosshair;}
 .output-wrap canvas{width:100%;height:100%;object-fit:contain;display:none;}
+.output-placeholder{color:var(--muted);font-size:11px;}
+
+/* Loading overlay */
 .loading-overlay{position:absolute;inset:0;background:rgba(13,13,15,0.92);display:none;align-items:center;justify-content:center;flex-direction:column;gap:12px;z-index:10;}
 .loading-overlay.active{display:flex;}
-.spinner{width:28px;height:28px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 0.7s linear infinite;}
+.spinner{width:26px;height:26px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 0.7s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg);}}
 .loading-text{font-size:11px;color:var(--muted);}
-.progress-bar-wrap{width:180px;height:3px;background:var(--border);border-radius:2px;overflow:hidden;}
+.progress-bar-wrap{width:160px;height:2px;background:var(--border);border-radius:2px;overflow:hidden;}
 .progress-bar{height:100%;background:var(--accent);width:0%;transition:width 0.15s;}
+
+/* Inspector */
 .inspector{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:10px 12px;flex-shrink:0;}
-.insp-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.insp-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
 .insp-coord{font-size:11px;color:var(--accent);}
 .insp-mode{font-size:10px;color:var(--muted);}
-.inspector-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
-.inspect-box{background:var(--card);border:1px solid var(--border);padding:8px;border-radius:var(--radius);}
-.inspect-title{color:var(--muted);font-size:10px;margin-bottom:5px;}
-.inspect-val{font-size:11px;display:flex;align-items:center;gap:6px;}
-.swatch{width:14px;height:14px;border-radius:3px;border:1px solid var(--border);flex-shrink:0;background:var(--card);}
-.contrib{margin-top:8px;display:flex;gap:20px;}
-.contrib-item{font-size:11px;}
+.insp-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;}
+.insp-box{background:var(--card);border:1px solid var(--border);padding:6px 8px;border-radius:var(--radius);}
+.insp-title{color:var(--muted);font-size:10px;margin-bottom:4px;}
+.insp-val{font-size:10px;display:flex;align-items:center;gap:5px;}
+.swatch{width:12px;height:12px;border-radius:2px;border:1px solid var(--border);flex-shrink:0;}
+.contrib{margin-top:6px;display:flex;gap:16px;}
+.contrib-item{font-size:10px;}
 .contrib-item span{color:var(--accent);font-weight:700;}
-.res-warn{font-size:10px;color:#F59E0B;margin-top:5px;display:none;line-height:1.4;}
-.statusbar{height:32px;border-top:1px solid var(--border);background:var(--panel);display:flex;align-items:center;justify-content:space-between;padding:0 16px;font-size:11px;color:var(--muted);}
-@keyframes point{from{transform:translateY(0);}to{transform:translateY(-4px);}}
-@media(max-width:1000px){
-  body{overflow:auto;}
-  .root{grid-template-columns:1fr;height:auto;}
-  .sidebar{border-right:none;border-bottom:1px solid var(--border);}
-  .main{overflow:auto;}
-  .panels{grid-template-columns:1fr;height:auto;}
-  .drop-zone{height:200px;}
-  .output-wrap{height:260px;}
+
+/* ── BOTTOM BAR ── */
+.bottom-bar{position:relative;z-index:2;height:72px;border-top:1px solid var(--border);background:var(--panel);display:flex;align-items:center;gap:10px;padding:0 16px;flex-shrink:0;}
+.upload-zone{flex:1;height:48px;background:var(--card);border:1px dashed var(--border);border-radius:var(--radius);display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;transition:border-color 0.15s;overflow:hidden;}
+.upload-zone:hover{border-color:var(--accent);}
+.upload-zone.loaded{border-style:solid;border-color:var(--border);}
+.upload-zone.drag-over{border-color:#3B82F6;background:#161626;}
+.upload-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;}
+.upload-zone canvas{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:none;border-radius:var(--radius);}
+.upload-zone .uz-label{font-size:10px;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:2px;pointer-events:none;z-index:1;}
+.upload-zone .uz-slot{font-size:9px;color:var(--dim);letter-spacing:1px;}
+.upload-zone .uz-info{font-size:9px;color:var(--muted);position:absolute;bottom:3px;left:0;right:0;text-align:center;z-index:2;pointer-events:none;background:rgba(13,13,15,0.7);padding:1px 0;}
+.compose-btn{height:48px;padding:0 20px;background:var(--card);border:1px solid var(--border);color:var(--text);border-radius:var(--radius);cursor:pointer;font-family:var(--font);font-size:11px;white-space:nowrap;transition:border-color 0.15s,background 0.15s;flex-shrink:0;}
+.compose-btn:hover{border-color:var(--accent);background:#1A1A1D;}
+.compose-btn:disabled{opacity:0.35;cursor:not-allowed;}
+.swap-btn{height:36px;width:36px;background:var(--card);border:1px solid var(--border);color:var(--text);border-radius:var(--radius);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:border-color 0.15s;}
+.swap-btn:hover{border-color:var(--accent);}
+
+/* ── RIGHT PANEL — History ── */
+.right-panel{background:var(--panel);border-left:1px solid var(--border);display:flex;flex-direction:column;z-index:2;overflow:hidden;}
+.right-panel-hdr{padding:12px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.right-panel-hdr span{font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;}
+.clear-btn{font-size:10px;color:var(--muted);background:transparent;border:none;cursor:pointer;padding:2px 6px;font-family:var(--font);}
+.clear-btn:hover{color:var(--accent);}
+.history-list{flex:1;overflow-y:auto;padding:8px;}
+.history-empty{font-size:10px;color:var(--dim);text-align:center;padding:20px 12px;line-height:1.6;}
+.history-item{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:8px;padding:8px;cursor:pointer;transition:border-color 0.15s;}
+.history-item:hover{border-color:var(--muted);}
+.history-item.active-item{border-color:var(--accent);}
+.history-flow{display:grid;grid-template-columns:1fr 14px 1fr 14px 1fr;gap:0;align-items:center;height:48px;}
+.h-thumb{width:100%;height:48px;object-fit:cover;border-radius:3px;background:var(--bg);display:block;}
+.h-arrow{text-align:center;color:var(--dim);font-size:10px;}
+.history-meta{margin-top:5px;display:flex;justify-content:space-between;align-items:center;}
+.history-mode{font-size:9px;color:var(--muted);letter-spacing:0.5px;}
+.history-time{font-size:9px;color:var(--dim);}
+
+/* ── Statusbar ── */
+.statusbar{height:28px;border-top:1px solid var(--border);background:var(--panel);display:flex;align-items:center;justify-content:space-between;padding:0 14px;font-size:10px;color:var(--muted);flex-shrink:0;}
+
+/* ── Feedback modal ── */
+.fb-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:1000;display:none;align-items:center;justify-content:center;}
+.fb-overlay.active{display:flex;}
+.fb-modal{background:#1C1C1F;border:1px solid #262629;border-radius:10px;padding:24px;width:380px;max-width:95vw;display:flex;flex-direction:column;gap:14px;}
+.fb-title{font-size:13px;font-weight:700;color:#EFEFEF;}
+.fb-subtitle{font-size:11px;color:#66666E;margin-top:-8px;}
+.fb-stars{display:flex;gap:6px;}
+.fb-star{font-size:22px;cursor:pointer;opacity:0.35;transition:opacity 0.1s,transform 0.1s;user-select:none;}
+.fb-star.active{opacity:1;}
+.fb-star:hover{transform:scale(1.2);}
+.fb-textarea{width:100%;background:#141416;border:1px solid #262629;color:#EFEFEF;padding:10px;border-radius:6px;font-family:var(--font);font-size:11px;resize:vertical;min-height:90px;outline:none;}
+.fb-textarea:focus{border-color:#66666E;}
+.fb-row{display:flex;gap:8px;justify-content:flex-end;}
+.fb-cancel{background:transparent;border:1px solid #262629;color:#66666E;padding:7px 16px;border-radius:6px;cursor:pointer;font-family:inherit;font-size:11px;}
+.fb-cancel:hover{border-color:#66666E;color:#EFEFEF;}
+.fb-submit{background:#166534;border:1px solid #16a34a;color:#bbf7d0;padding:7px 16px;border-radius:6px;cursor:pointer;font-family:inherit;font-size:11px;font-weight:600;}
+.fb-submit:hover{background:#15803d;}
+.fb-submit:disabled{opacity:0.4;cursor:not-allowed;}
+.fb-thanks{font-size:12px;color:#86efac;text-align:center;display:none;}
+
+@media(max-width:900px){
+  .workspace{grid-template-columns:1fr;grid-template-rows:auto 1fr auto;}
+  .left-panel{display:none;}
+  .right-panel{display:none;}
 }
 </style>
 </head>
 <body>
 
+<!-- TOPBAR -->
 <div class="topbar">
   <div class="logo">PIXELCOMPOSER</div>
-  <div class="tag">deterministic fusion · linear RGB · Lanczos · local only</div>
+  <div class="tag">deterministic · hierarchical · linear RGB</div>
   <button class="feedback-btn" onclick="openFeedback()">⭐ feedback</button>
 </div>
 
-<div class="root">
-  <div class="sidebar">
+<!-- 3-ZONE WORKSPACE -->
+<div class="workspace">
+
+  <!-- LEFT PANEL -->
+  <div class="left-panel">
 
     <div>
       <div class="sec-label">FUSION MODE</div>
@@ -130,26 +187,26 @@ input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer;}
         <option value="soft_light" selected>▸ soft light (default)</option>
         <option value="screen">screen</option>
         <option value="overlay">overlay</option>
-        <option value="hsl">✦ HSL chroma blend (new)</option>
+        <option value="hsl">✦ HSL chroma blend</option>
         <option value="frequency">frequency fusion</option>
         <option value="normal">alpha blend</option>
         <option value="detail">detail preserve</option>
         <option value="multiply">multiply</option>
         <option value="difference">difference</option>
       </select>
-      <div style="font-size:10px;color:#F59E0B;margin-top:5px;">↑ try other options for different results</div>
+      <div class="hint">↑ try other options for different results</div>
     </div>
 
-    <div id="freqControls">
+    <div id="freqControls" style="display:none;">
       <div class="slider-wrap">
         <div class="slider-hdr"><span>frequency split σ</span><span id="sigmaDisplay">8</span></div>
         <input type="range" id="sigmaSlider" min="1" max="30" value="8">
       </div>
-      <div style="margin-top:8px;">
+      <div style="margin-top:6px;">
         <div class="sec-label">LOW FREQ FROM</div>
         <div class="btn-row">
-          <button class="btn active" id="btnLowA" onclick="setLowSrc('A')">A (lighting)</button>
-          <button class="btn" id="btnLowB" onclick="setLowSrc('B')">B (lighting)</button>
+          <button class="btn active" id="btnLowA" onclick="setLowSrc('A')">A</button>
+          <button class="btn" id="btnLowB" onclick="setLowSrc('B')">B</button>
         </div>
       </div>
     </div>
@@ -174,7 +231,7 @@ input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer;}
         <option value="square">Square — 1080 × 1080</option>
         <option value="custom">custom</option>
       </select>
-      <div class="res-warn" id="resWarn">⚠ output exceeds source resolution — upscaling from limited source detail</div>
+      <div class="res-warn" id="resWarn">⚠ upscaling — quality limited by source</div>
       <div class="custom-box" id="customBox">
         <div class="sec-label" style="margin-top:4px;">WIDTH</div>
         <input type="number" id="customWidth" value="1920" min="64" max="8192">
@@ -191,83 +248,60 @@ input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer;}
         <div class="slider-hdr"><span>unsharp amount</span><span id="unsharpDisplay">40%</span></div>
         <input type="range" id="unsharpSlider" min="0" max="100" value="40">
       </div>
-      <div style="font-size:10px;color:#F59E0B;margin-top:5px;">↑ slide to see different sharpness effects</div>
+      <div class="hint">↑ slide to see different sharpness effects</div>
     </div>
 
     <div class="sep"></div>
 
-    <button class="btn primary" id="exportBtn" disabled>EXPORT PNG</button>
+    <div style="flex:1;"></div>
 
-    <div class="sep"></div>
-
-    <!-- Example loop widget -->
-    <div id="exampleWidget" style="position:relative;">
-      <div style="display:flex;align-items:center;gap:6px;margin-bottom:5px;">
-        <span style="font-size:18px;animation:point 1s ease-in-out infinite alternate;">👆</span>
-        <span style="font-size:10px;color:#F59E0B;letter-spacing:1px;text-transform:uppercase;">example — click to pause</span>
-      </div>
-      <canvas id="exampleCanvas" width="226" height="90"
-        style="width:100%;height:90px;border-radius:6px;border:1px solid var(--border);cursor:pointer;display:block;"
-        onclick="toggleExample()"></canvas>
-      <div id="exampleLabel" style="font-size:10px;color:var(--muted);margin-top:4px;text-align:center;">upload two images to try it yourself ↑</div>
-    </div>
+    <button class="download-btn" id="downloadBtn" disabled onclick="downloadOutput()">DOWNLOAD</button>
 
   </div>
 
-  <div class="main">
-    <div class="panels">
+  <!-- CENTER STAGE -->
+  <div class="center-stage">
 
-      <div class="panel">
-        <div class="panel-hdr">
-          <span class="sec-label">IMAGE A</span>
-          <span class="panel-info" id="infoA">—</span>
-        </div>
-        <div class="drop-zone" id="dropA"
-             ondragover="onDrag(event,'A')" ondragleave="offDrag('A')" ondrop="onDrop(event,'A')">
-          <input type="file" id="fileA" accept="image/*">
-          <div class="placeholder" id="hintA">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-              <rect x="3" y="3" width="18" height="18" rx="2"/>
-              <circle cx="8.5" cy="8.5" r="1.5"/>
-              <path d="m21 15-5-5L5 21"/>
-            </svg>
-            drop or click to load
+    <!-- Background visual memory -->
+    <div class="bg-memory" id="bgMemory"></div>
+
+    <div class="pipeline">
+
+      <!-- A → B → Output flow (input previews) -->
+      <div class="pipeline-flow">
+        <div class="pipe-panel">
+          <div class="pipe-label">IMAGE A</div>
+          <div class="pipe-img" id="pipeA">
+            <div class="empty">—</div>
+            <canvas id="canvasA"></canvas>
           </div>
-          <canvas id="canvasA"></canvas>
         </div>
-      </div>
-
-      <div style="display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-        <button onclick="swapImages()" title="swap A and B" style="background:var(--card);border:1px solid var(--border);color:var(--text);width:28px;height:28px;border-radius:4px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;">⇄</button>
-      </div>
-
-      <div class="panel">
-        <div class="panel-hdr">
-          <span class="sec-label">IMAGE B</span>
-          <span class="panel-info" id="infoB">—</span>
-        </div>
-        <div class="drop-zone" id="dropB"
-             ondragover="onDrag(event,'B')" ondragleave="offDrag('B')" ondrop="onDrop(event,'B')">
-          <input type="file" id="fileB" accept="image/*">
-          <div class="placeholder" id="hintB">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-              <rect x="3" y="3" width="18" height="18" rx="2"/>
-              <circle cx="8.5" cy="8.5" r="1.5"/>
-              <path d="m21 15-5-5L5 21"/>
-            </svg>
-            drop or click to load
+        <div class="pipe-arrow">→</div>
+        <div class="pipe-panel">
+          <div class="pipe-label">IMAGE B</div>
+          <div class="pipe-img" id="pipeB">
+            <div class="empty">—</div>
+            <canvas id="canvasB"></canvas>
           </div>
-          <canvas id="canvasB"></canvas>
+        </div>
+        <div class="pipe-arrow">→</div>
+        <div class="pipe-panel">
+          <div class="pipe-label">OUTPUT</div>
+          <div class="pipe-img" id="pipeOut">
+            <div class="empty">—</div>
+            <canvas id="canvasPipeOut"></canvas>
+          </div>
         </div>
       </div>
 
-      <div class="panel">
-        <div class="panel-hdr">
-          <span class="sec-label">OUTPUT</span>
-          <span class="panel-info" id="infoOut">—</span>
+      <!-- Dominant output view -->
+      <div class="output-section">
+        <div class="output-hdr">
+          <span style="font-size:10px;color:var(--muted);letter-spacing:1px;">COMPOSITION</span>
+          <span style="font-size:10px;color:var(--muted);" id="outInfo">—</span>
         </div>
-        <div class="output-wrap">
-          <div class="placeholder" id="outPlaceholder">output will appear here</div>
+        <div class="output-wrap" id="outputWrap">
+          <div class="output-placeholder" id="outPlaceholder">upload two images below to compose</div>
           <canvas id="canvasOut"></canvas>
           <div class="loading-overlay" id="loadingOverlay">
             <div class="spinner"></div>
@@ -277,925 +311,91 @@ input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer;}
         </div>
       </div>
 
+      <!-- Inspector -->
+      <div class="inspector">
+        <div class="insp-row">
+          <span class="insp-coord" id="inspCoord">hover output to inspect pixels</span>
+          <span class="insp-mode" id="inspMode">—</span>
+        </div>
+        <div class="insp-grid">
+          <div class="insp-box">
+            <div class="insp-title">IMAGE A</div>
+            <div class="insp-val"><div class="swatch" id="swatchA"></div><span id="valA">—</span></div>
+          </div>
+          <div class="insp-box">
+            <div class="insp-title">IMAGE B</div>
+            <div class="insp-val"><div class="swatch" id="swatchB"></div><span id="valB">—</span></div>
+          </div>
+          <div class="insp-box">
+            <div class="insp-title">OUTPUT</div>
+            <div class="insp-val"><div class="swatch" id="swatchOut"></div><span id="valOut">—</span></div>
+          </div>
+        </div>
+        <div class="contrib">
+          <div class="contrib-item">A: <span id="contribA">—</span></div>
+          <div class="contrib-item">B: <span id="contribB">—</span></div>
+        </div>
+      </div>
+
     </div>
 
-    <div class="inspector">
-      <div class="insp-top">
-        <div class="insp-coord" id="inspCoord">hover output to inspect pixels</div>
-        <div class="insp-mode" id="inspMode">—</div>
-      </div>
-      <div class="inspector-grid">
-        <div class="inspect-box">
-          <div class="inspect-title">IMAGE A</div>
-          <div class="inspect-val"><div class="swatch" id="swatchA"></div><span id="valA">—</span></div>
-        </div>
-        <div class="inspect-box">
-          <div class="inspect-title">IMAGE B</div>
-          <div class="inspect-val"><div class="swatch" id="swatchB"></div><span id="valB">—</span></div>
-        </div>
-        <div class="inspect-box">
-          <div class="inspect-title">OUTPUT</div>
-          <div class="inspect-val"><div class="swatch" id="swatchOut"></div><span id="valOut">—</span></div>
-        </div>
-      </div>
-      <div class="contrib">
-        <div class="contrib-item">A contribution: <span id="contribA">—</span></div>
-        <div class="contrib-item">B contribution: <span id="contribB">—</span></div>
-      </div>
+  </div>
+
+  <!-- RIGHT PANEL — History -->
+  <div class="right-panel">
+    <div class="right-panel-hdr">
+      <span>HISTORY</span>
+      <button class="clear-btn" onclick="clearHistory()">clear</button>
+    </div>
+    <div class="history-list" id="historyList">
+      <div class="history-empty" id="historyEmpty">compositions will appear here<br>after each output</div>
     </div>
   </div>
+
 </div>
 
+<!-- BOTTOM BAR -->
+<div class="bottom-bar">
+  <div class="upload-zone" id="dropA"
+       ondragover="onDrag(event,'A')" ondragleave="offDrag('A')" ondrop="onDrop(event,'A')">
+    <input type="file" id="fileA" accept="image/*">
+    <div class="uz-label" id="hintA">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/>
+      </svg>
+      <span>IMAGE A</span>
+      <span class="uz-slot">drop or click</span>
+    </div>
+    <canvas id="thumbA"></canvas>
+    <div class="uz-info" id="infoA" style="display:none;"></div>
+  </div>
+
+  <button class="swap-btn" onclick="swapImages()" title="swap A ↔ B">⇄</button>
+
+  <div class="upload-zone" id="dropB"
+       ondragover="onDrag(event,'B')" ondragleave="offDrag('B')" ondrop="onDrop(event,'B')">
+    <input type="file" id="fileB" accept="image/*">
+    <div class="uz-label" id="hintB">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/>
+      </svg>
+      <span>IMAGE B</span>
+      <span class="uz-slot">drop or click</span>
+    </div>
+    <canvas id="thumbB"></canvas>
+    <div class="uz-info" id="infoB" style="display:none;"></div>
+  </div>
+
+  <button class="compose-btn" id="composeBtn" disabled onclick="compose()">▶ COMPOSE</button>
+</div>
+
+<!-- STATUSBAR -->
 <div class="statusbar">
-  <span id="statusMsg">load two images to begin</span>
+  <span id="statusMsg">upload two images to begin</span>
   <span id="statusRight"></span>
 </div>
 
-<script>
-// ─────────────────────────────────────────────────────────────
-// WEB WORKER SOURCE — runs entirely off main thread
-// Contains: Lanczos resampling, linear RGB conversion,
-//           all fusion modes, unsharp mask
-// ─────────────────────────────────────────────────────────────
-const WORKER_SRC = `
-
-// ═══════════════════════════════════════════════════════════════
-// PIXELCOMPOSER ENGINE v2 — Hierarchical Compositing Pipeline
-// stages: resample → linearise → analyse → decompose (Laplacian
-// pyramid) → weight (edge-aware + variance + semantic) → fuse →
-// reconstruct → HSL chroma correction → sharpen → encode
-// All math in linear light. Every pixel drives its own blend.
-// ═══════════════════════════════════════════════════════════════
-
-// ── sRGB ↔ Linear ─────────────────────────────────────────────
-function toLinear(v){
-  v/=255;
-  return v<=0.04045?v/12.92:Math.pow((v+0.055)/1.055,2.4);
-}
-function toSRGB(v){
-  v=Math.max(0,Math.min(1,v));
-  return(v<=0.0031308?v*12.92*255:(1.055*Math.pow(v,1/2.4)-0.055)*255);
-}
-
-// ── Buffer conversions ─────────────────────────────────────────
-function toLinearBuf(rgba,n){
-  const lin=new Float32Array(n*3);
-  for(let i=0;i<n;i++){
-    lin[i*3]  =toLinear(rgba[i*4]);
-    lin[i*3+1]=toLinear(rgba[i*4+1]);
-    lin[i*3+2]=toLinear(rgba[i*4+2]);
-  }
-  return lin;
-}
-function toSRGBBuf(lin,n){
-  const out=new Uint8ClampedArray(n*4);
-  for(let i=0;i<n;i++){
-    out[i*4]  =toSRGB(lin[i*3])  |0;
-    out[i*4+1]=toSRGB(lin[i*3+1])|0;
-    out[i*4+2]=toSRGB(lin[i*3+2])|0;
-    out[i*4+3]=255;
-  }
-  return out;
-}
-
-// ── Lanczos-3 sinc kernel ──────────────────────────────────────
-function lanczosK(x,a){
-  if(x===0)return 1;
-  if(Math.abs(x)>=a)return 0;
-  const px=Math.PI*x;
-  return(a*Math.sin(px)*Math.sin(px/a))/(px*px);
-}
-
-// ── Lanczos-3 two-pass resize ─────────────────────────────────
-function lanczosResize(src,sw,sh,dw,dh){
-  const a=3;
-  const tmp=new Float32Array(dw*sh*4);
-  const out=new Uint8ClampedArray(dw*dh*4);
-  const xRatio=sw/dw;
-  for(let y=0;y<sh;y++){
-    for(let x=0;x<dw;x++){
-      const sx=(x+0.5)*xRatio-0.5;
-      const x0=Math.floor(sx)-a+1;
-      let r=0,g=0,b=0,al=0,ws=0;
-      for(let k=x0;k<=x0+2*a-1;k++){
-        const kv=lanczosK(sx-k,a);
-        const px=Math.max(0,Math.min(sw-1,k));
-        const si=(y*sw+px)*4;
-        r+=src[si]*kv;g+=src[si+1]*kv;b+=src[si+2]*kv;al+=src[si+3]*kv;ws+=kv;
-      }
-      const di=(y*dw+x)*4;
-      tmp[di]=ws?r/ws:0;tmp[di+1]=ws?g/ws:0;tmp[di+2]=ws?b/ws:0;tmp[di+3]=ws?al/ws:255;
-    }
-  }
-  const yRatio=sh/dh;
-  for(let y=0;y<dh;y++){
-    for(let x=0;x<dw;x++){
-      const sy=(y+0.5)*yRatio-0.5;
-      const y0=Math.floor(sy)-a+1;
-      let r=0,g=0,b=0,ws=0;
-      for(let k=y0;k<=y0+2*a-1;k++){
-        const kv=lanczosK(sy-k,a);
-        const py=Math.max(0,Math.min(sh-1,k));
-        const si=(py*dw+x)*4;
-        r+=tmp[si]*kv;g+=tmp[si+1]*kv;b+=tmp[si+2]*kv;ws+=kv;
-      }
-      const di=(y*dw+x)*4;
-      out[di]  =Math.max(0,Math.min(255,ws?r/ws:0));
-      out[di+1]=Math.max(0,Math.min(255,ws?g/ws:0));
-      out[di+2]=Math.max(0,Math.min(255,ws?b/ws:0));
-      out[di+3]=255;
-    }
-  }
-  return out;
-}
-
-// ── Separable Gaussian blur — linear float32 3ch ──────────────
-function gaussBlur(data,w,h,sigma){
-  const r=Math.max(1,Math.ceil(3*sigma))|0;
-  const ks=2*r+1;
-  const k=new Float32Array(ks);
-  let s=0;
-  for(let i=0;i<ks;i++){const x=i-r;k[i]=Math.exp(-(x*x)/(2*sigma*sigma));s+=k[i];}
-  for(let i=0;i<ks;i++)k[i]/=s;
-  const tmp=new Float32Array(w*h*3);
-  const out=new Float32Array(w*h*3);
-  for(let y=0;y<h;y++){
-    for(let x=0;x<w;x++){
-      let r0=0,g0=0,b0=0;
-      for(let ki=-r;ki<=r;ki++){
-        const px=Math.max(0,Math.min(w-1,x+ki));
-        const si=(y*w+px)*3;const kv=k[ki+r];
-        r0+=data[si]*kv;g0+=data[si+1]*kv;b0+=data[si+2]*kv;
-      }
-      const di=(y*w+x)*3;tmp[di]=r0;tmp[di+1]=g0;tmp[di+2]=b0;
-    }
-  }
-  for(let y=0;y<h;y++){
-    for(let x=0;x<w;x++){
-      let r0=0,g0=0,b0=0;
-      for(let ki=-r;ki<=r;ki++){
-        const py=Math.max(0,Math.min(h-1,y+ki));
-        const si=(py*w+x)*3;const kv=k[ki+r];
-        r0+=tmp[si]*kv;g0+=tmp[si+1]*kv;b0+=tmp[si+2]*kv;
-      }
-      const di=(y*w+x)*3;out[di]=r0;out[di+1]=g0;out[di+2]=b0;
-    }
-  }
-  return out;
-}
-
-// ── Luminance BT.709 ──────────────────────────────────────────
-function lum(lin,i){return 0.2126*lin[i*3]+0.7152*lin[i*3+1]+0.0722*lin[i*3+2];}
-
-// ═══════════════════════════════════════════════════════════════
-// STAGE 1: SCENE ANALYSIS
-// region 0=flat 1=edge 2=texture 3=highlight 4=shadow
-// ═══════════════════════════════════════════════════════════════
-function analyseScene(lin,w,h){
-  const n=w*h;
-  const regionMap=new Uint8Array(n);
-  const edgeMap=new Float32Array(n);
-  const varMap=new Float32Array(n);
-  const lumMap=new Float32Array(n);
-  for(let i=0;i<n;i++)lumMap[i]=lum(lin,i);
-  for(let y=1;y<h-1;y++){
-    for(let x=1;x<w-1;x++){
-      const i=y*w+x;
-      const gx=(-lumMap[(y-1)*w+(x-1)]+lumMap[(y-1)*w+(x+1)]-2*lumMap[y*w+(x-1)]+2*lumMap[y*w+(x+1)]-lumMap[(y+1)*w+(x-1)]+lumMap[(y+1)*w+(x+1)]);
-      const gy=(-lumMap[(y-1)*w+(x-1)]-2*lumMap[(y-1)*w+x]-lumMap[(y-1)*w+(x+1)]+lumMap[(y+1)*w+(x-1)]+2*lumMap[(y+1)*w+x]+lumMap[(y+1)*w+(x+1)]);
-      edgeMap[i]=Math.sqrt(gx*gx+gy*gy);
-    }
-  }
-  let eMax=0;for(let i=0;i<n;i++)if(edgeMap[i]>eMax)eMax=edgeMap[i];
-  if(eMax>0)for(let i=0;i<n;i++)edgeMap[i]/=eMax;
-  for(let y=2;y<h-2;y++){for(let x=2;x<w-2;x++){
-    let sum=0,sum2=0,cnt=0;
-    for(let dy=-2;dy<=2;dy++){for(let dx=-2;dx<=2;dx++){const v=lumMap[(y+dy)*w+(x+dx)];sum+=v;sum2+=v*v;cnt++;}}
-    const mean=sum/cnt;varMap[y*w+x]=Math.max(0,sum2/cnt-mean*mean);
-  }}
-  let vMax=0;for(let i=0;i<n;i++)if(varMap[i]>vMax)vMax=varMap[i];
-  if(vMax>0)for(let i=0;i<n;i++)varMap[i]/=vMax;
-  const step=Math.max(1,Math.floor(n/2048));const smp=[];
-  for(let i=0;i<n;i+=step)smp.push(lumMap[i]);smp.sort((a,b)=>a-b);
-  const p15=smp[Math.floor(smp.length*0.15)]||0.1;
-  const p85=smp[Math.floor(smp.length*0.85)]||0.9;
-  for(let i=0;i<n;i++){
-    if(edgeMap[i]>0.25)    regionMap[i]=1;
-    else if(lumMap[i]>p85) regionMap[i]=3;
-    else if(lumMap[i]<p15) regionMap[i]=4;
-    else if(varMap[i]>0.3) regionMap[i]=2;
-    else                   regionMap[i]=0;
-  }
-  return{regionMap,edgeMap,varMap,lumMap};
-}
-
-// ═══════════════════════════════════════════════════════════════
-// STAGE 2: LAPLACIAN PYRAMID (6 levels)
-// ═══════════════════════════════════════════════════════════════
-const PYRAMID_LEVELS=6;
-
-function downsample(data,w,h){
-  const dw=Math.max(1,w>>1),dh=Math.max(1,h>>1);
-  const out=new Float32Array(dw*dh*3);
-  for(let y=0;y<dh;y++){for(let x=0;x<dw;x++){
-    const di=(y*dw+x)*3;let r=0,g=0,b=0,cnt=0;
-    for(let dy=0;dy<2;dy++){for(let dx=0;dx<2;dx++){
-      const sy=Math.min(h-1,y*2+dy),sx=Math.min(w-1,x*2+dx);
-      const si=(sy*w+sx)*3;r+=data[si];g+=data[si+1];b+=data[si+2];cnt++;
-    }}
-    out[di]=r/cnt;out[di+1]=g/cnt;out[di+2]=b/cnt;
-  }}
-  return{data:out,w:dw,h:dh};
-}
-
-function upsample(data,sw,sh,dw,dh){
-  const out=new Float32Array(dw*dh*3);
-  for(let y=0;y<dh;y++){for(let x=0;x<dw;x++){
-    const fx=(x+0.5)*sw/dw-0.5,fy=(y+0.5)*sh/dh-0.5;
-    const x0=Math.max(0,Math.min(sw-1,Math.floor(fx))),x1=Math.max(0,Math.min(sw-1,x0+1));
-    const y0=Math.max(0,Math.min(sh-1,Math.floor(fy))),y1=Math.max(0,Math.min(sh-1,y0+1));
-    const tx=fx-Math.floor(fx),ty=fy-Math.floor(fy);
-    const di=(y*dw+x)*3;
-    for(let c=0;c<3;c++){
-      const v00=data[(y0*sw+x0)*3+c],v10=data[(y0*sw+x1)*3+c];
-      const v01=data[(y1*sw+x0)*3+c],v11=data[(y1*sw+x1)*3+c];
-      out[di+c]=(v00*(1-tx)+v10*tx)*(1-ty)+(v01*(1-tx)+v11*tx)*ty;
-    }
-  }}
-  return out;
-}
-
-function buildPyramid(lin,w,h){
-  const gauss=[{data:lin,w,h}];
-  for(let lv=1;lv<PYRAMID_LEVELS;lv++){
-    const prev=gauss[lv-1];
-    const bl=gaussBlur(prev.data,prev.w,prev.h,1.0);
-    gauss.push(downsample(bl,prev.w,prev.h));
-  }
-  const pyr=[];
-  for(let lv=0;lv<PYRAMID_LEVELS-1;lv++){
-    const curr=gauss[lv],next=gauss[lv+1];
-    const up=upsample(next.data,next.w,next.h,curr.w,curr.h);
-    const lap=new Float32Array(curr.data.length);
-    for(let i=0;i<curr.data.length;i++)lap[i]=curr.data[i]-up[i];
-    pyr.push({lap,w:curr.w,h:curr.h});
-  }
-  const base=gauss[PYRAMID_LEVELS-1];
-  pyr.push({lap:base.data,w:base.w,h:base.h});
-  return pyr;
-}
-
-function collapsePyramid(pyr){
-  let cur=pyr[PYRAMID_LEVELS-1].lap,cw=pyr[PYRAMID_LEVELS-1].w,ch=pyr[PYRAMID_LEVELS-1].h;
-  for(let lv=PYRAMID_LEVELS-2;lv>=0;lv--){
-    const up=upsample(cur,cw,ch,pyr[lv].w,pyr[lv].h);
-    const lap=pyr[lv].lap;
-    const out=new Float32Array(lap.length);
-    for(let i=0;i<lap.length;i++)out[i]=up[i]+lap[i];
-    cur=out;cw=pyr[lv].w;ch=pyr[lv].h;
-  }
-  return cur;
-}
-
-// ═══════════════════════════════════════════════════════════════
-// STAGE 3: ADAPTIVE WEIGHT MAPS
-// Edge-aware + local variance + semantic signals combined.
-// ═══════════════════════════════════════════════════════════════
-function computeWeightMaps(aA,aB,w,h,mode,params){
-  const n=w*h;
-  const wA=new Float32Array(n);
-  const wB=new Float32Array(n);
-  const SB=[[0.5,0.5],[0.5,0.5],[0.4,0.6],[0.3,0.7],[0.6,0.4]];
-  const lowSrc=params.lowSrc||'A';
-  for(let i=0;i<n;i++){
-    const eA=aA.edgeMap[i],eB=aB.edgeMap[i];
-    const vA=aA.varMap[i], vB=aB.varMap[i];
-    const lA=aA.lumMap[i], lB=aB.lumMap[i];
-    const eT=eA+eB+1e-8,vT=vA+vB+1e-8;
-    const lcA=Math.abs(lA-0.5),lcB=Math.abs(lB-0.5),lcT=lcA+lcB+1e-8;
-    const eWA=eA/eT,eWB=eB/eT,vWA=vA/vT,vWB=vB/vT,lcWA=lcA/lcT,lcWB=lcB/lcT;
-    const dr=eA>eB?aA.regionMap[i]:aB.regionMap[i];
-    const[sbA,sbB]=SB[dr]||[0.5,0.5];
-    let wa,wb;
-    if(mode==='frequency'){
-      if(lowSrc==='A'){wa=0.5+0.3*(lcWA-0.5)-0.2*eWB;wb=1-wa;}
-      else{wb=0.5+0.3*(lcWB-0.5)-0.2*eWA;wa=1-wb;}
-    }else if(mode==='detail'){wb=0.4+0.4*eWB+0.2*vWB;wa=1-wb;}
-    else if(mode==='soft_light'||mode==='overlay'){wa=0.4*sbA+0.3*lcWA+0.3*vWA;wb=0.4*sbB+0.3*lcWB+0.3*vWB;}
-    else if(mode==='screen'){wa=0.3*sbA+0.4*lcWA+0.3*eWA;wb=0.3*sbB+0.4*lcWB+0.3*eWB;}
-    else if(mode==='hsl'){wa=0.3*sbA+0.4*vWA+0.3*lcWA;wb=0.3*sbB+0.4*vWB+0.3*lcWB;}
-    else{wa=0.34*sbA+0.33*eWA+0.33*vWA;wb=0.34*sbB+0.33*eWB+0.33*vWB;}
-    const t=wa+wb+1e-8;wA[i]=wa/t;wB[i]=wb/t;
-  }
-  return{wA,wB};
-}
-
-// ═══════════════════════════════════════════════════════════════
-// STAGE 4: PYRAMID FUSION
-// ═══════════════════════════════════════════════════════════════
-function fusePyramids(pyrA,pyrB,wA,wB,w,h,mode,params){
-  const fusedPyr=[];
-  for(let lv=0;lv<PYRAMID_LEVELS;lv++){
-    const levA=pyrA[lv],levB=pyrB[lv];
-    const lw=levA.w,lh=levA.h,ln=lw*lh;
-    let levelWA,levelWB;
-    if(lv===0){levelWA=wA;levelWB=wB;}
-    else{
-      levelWA=new Float32Array(ln);levelWB=new Float32Array(ln);
-      const scX=w/lw,scY=h/lh;
-      for(let y=0;y<lh;y++){for(let x=0;x<lw;x++){
-        let sa=0,sb=0,cnt=0;
-        const x0=Math.floor(x*scX),x1=Math.min(w-1,Math.ceil((x+1)*scX));
-        const y0=Math.floor(y*scY),y1=Math.min(h-1,Math.ceil((y+1)*scY));
-        for(let sy=y0;sy<=y1;sy++){for(let sx=x0;sx<=x1;sx++){sa+=wA[sy*w+sx];sb+=wB[sy*w+sx];cnt++;}}
-        levelWA[y*lw+x]=sa/cnt;levelWB[y*lw+x]=sb/cnt;
-      }}
-    }
-    const dA=levA.lap,dB=levB.lap;
-    const fused=new Float32Array(lw*lh*3);
-    if(lv<PYRAMID_LEVELS-1){
-      for(let i=0;i<ln;i++){
-        const p=i*3,wa=levelWA[i],wb=levelWB[i];
-        fused[p]=dA[p]*wa+dB[p]*wb;fused[p+1]=dA[p+1]*wa+dB[p+1]*wb;fused[p+2]=dA[p+2]*wa+dB[p+2]*wb;
-      }
-    }else{
-      const alpha=params.alpha||0.5;
-      for(let i=0;i<ln;i++){
-        const p=i*3,wa=levelWA[i],wb=levelWB[i];
-        const ra=dA[p],ga=dA[p+1],ba=dA[p+2],rb=dB[p],gb=dB[p+1],bb=dB[p+2];
-        let r,g,b;
-        if(mode==='multiply'){r=ra*rb;g=ga*gb;b=ba*bb;}
-        else if(mode==='screen'){r=1-(1-ra)*(1-rb);g=1-(1-ga)*(1-gb);b=1-(1-ba)*(1-bb);}
-        else if(mode==='overlay'){const ov=(a,bv)=>a<0.5?2*a*bv:1-2*(1-a)*(1-bv);r=ov(ra,rb);g=ov(ga,gb);b=ov(ba,bb);}
-        else if(mode==='soft_light'){const sl=(a,bv)=>bv<0.5?a-(1-2*bv)*a*(1-a):a+(2*bv-1)*(Math.sqrt(Math.max(0,a))-a);r=sl(ra,rb);g=sl(ga,gb);b=sl(ba,bb);}
-        else if(mode==='difference'){r=Math.abs(ra-rb);g=Math.abs(ga-gb);b=Math.abs(ba-bb);}
-        else if(mode==='normal'){r=ra*(1-alpha)+rb*alpha;g=ga*(1-alpha)+gb*alpha;b=ba*(1-alpha)+bb*alpha;}
-        else{r=ra*wa+rb*wb;g=ga*wa+gb*wb;b=ba*wa+bb*wb;}
-        fused[p]  =r*0.7+(ra*wa+rb*wb)*0.3;
-        fused[p+1]=g*0.7+(ga*wa+gb*wb)*0.3;
-        fused[p+2]=b*0.7+(ba*wa+bb*wb)*0.3;
-      }
-    }
-    fusedPyr.push({lap:fused,w:lw,h:lh});
-  }
-  return fusedPyr;
-}
-
-// ═══════════════════════════════════════════════════════════════
-// STAGE 5: HSL CHROMA CORRECTION
-// ═══════════════════════════════════════════════════════════════
-function rgbToHsl(r,g,b){
-  const mx=Math.max(r,g,b),mn=Math.min(r,g,b),l=(mx+mn)/2;
-  if(mx===mn)return[0,0,l];
-  const d=mx-mn,s=l>0.5?d/(2-mx-mn):d/(mx+mn);
-  let h=0;
-  if(mx===r)h=((g-b)/d+(g<b?6:0))/6;
-  else if(mx===g)h=((b-r)/d+2)/6;
-  else h=((r-g)/d+4)/6;
-  return[h,s,l];
-}
-function hslToRgb(h,s,l){
-  if(s===0)return[l,l,l];
-  const q=l<0.5?l*(1+s):l+s-l*s,p=2*l-q;
-  const hf=(p,q,t)=>{if(t<0)t+=1;if(t>1)t-=1;if(t<1/6)return p+(q-p)*6*t;if(t<1/2)return q;if(t<2/3)return p+(q-p)*(2/3-t)*6;return p;};
-  return[hf(p,q,h+1/3),hf(p,q,h),hf(p,q,h-1/3)];
-}
-
-function hslChromaPass(fused,linA,linB,wA,wB,n,amount){
-  if(amount<=0)return fused;
-  const out=new Float32Array(n*3);
-  for(let i=0;i<n;i++){
-    const p=i*3;
-    const[hF,sF,lF]=rgbToHsl(fused[p],fused[p+1],fused[p+2]);
-    const[hA,sA]=rgbToHsl(linA[p],linA[p+1],linA[p+2]);
-    const[hB,sB]=rgbToHsl(linB[p],linB[p+1],linB[p+2]);
-    let dh=hB-hA;if(dh>0.5)dh-=1;if(dh<-0.5)dh+=1;
-    const hBlend=(hA+dh*wB[i]+1)%1;
-    const sBlend=Math.min(1,(sA*wA[i]+sB*wB[i])*1.08);
-    const hOut=hF*(1-amount)+hBlend*amount;
-    const sOut=sF*(1-amount)+sBlend*amount;
-    const[rO,gO,bO]=hslToRgb(hOut,sOut,lF);
-    out[p]=Math.max(0,Math.min(1,rO));out[p+1]=Math.max(0,Math.min(1,gO));out[p+2]=Math.max(0,Math.min(1,bO));
-  }
-  return out;
-}
-
-// ── Unsharp mask ──────────────────────────────────────────────
-function unsharpMask(lin,w,h,amount){
-  const blurred=gaussBlur(lin,w,h,1.2);
-  const out=new Float32Array(lin.length);
-  for(let i=0;i<lin.length;i++)out[i]=Math.max(0,Math.min(1,lin[i]+amount*(lin[i]-blurred[i])));
-  return out;
-}
-
-// ═══════════════════════════════════════════════════════════════
-// DIRECT BLEND — non-pyramid modes with adaptive weights
-// ═══════════════════════════════════════════════════════════════
-function blendDirect(linA,linB,wA,wB,n,mode,params){
-  const out=new Float32Array(n*3);
-  const atA=new Float32Array(n);
-  const atB=new Float32Array(n);
-  const alpha=params.alpha||0.5;
-  for(let i=0;i<n;i++){
-    const p=i*3,wa=wA[i],wb=wB[i];
-    const ra=linA[p],ga=linA[p+1],ba=linA[p+2];
-    const rb=linB[p],gb=linB[p+1],bb=linB[p+2];
-    let r,g,b;
-    if(mode==='normal'){r=ra*(1-alpha)+rb*alpha;g=ga*(1-alpha)+gb*alpha;b=ba*(1-alpha)+bb*alpha;}
-    else if(mode==='multiply'){r=ra*rb;g=ga*gb;b=ba*bb;}
-    else if(mode==='difference'){r=Math.abs(ra-rb);g=Math.abs(ga-gb);b=Math.abs(ba-bb);}
-    else if(mode==='detail'){r=rb*wb+ra*wa;g=gb*wb+ga*wa;b=bb*wb+ba*wa;}
-    else{r=ra*wa+rb*wb;g=ga*wa+gb*wb;b=ba*wa+bb*wb;}
-    out[p]  =Math.max(0,Math.min(1,r*0.75+(ra*wa+rb*wb)*0.25));
-    out[p+1]=Math.max(0,Math.min(1,g*0.75+(ga*wa+gb*wb)*0.25));
-    out[p+2]=Math.max(0,Math.min(1,b*0.75+(ba*wa+bb*wb)*0.25));
-    atA[i]=wa;atB[i]=wb;
-  }
-  return{out,atA,atB};
-}
-
-// ═══════════════════════════════════════════════════════════════
-// MAIN WORKER HANDLER
-// Pyramid path: frequency hsl soft_light overlay screen
-// Direct path:  normal multiply difference detail
-// All share: Lanczos + linearise + analyse + weights + sharpen
-// ═══════════════════════════════════════════════════════════════
-self.onmessage=function(e){
-  const{rgbaA,rgbaB,sw,sh,dw,dh,mode,params,unsharpAmount}=e.data;
-  const n=dw*dh;
-
-  self.postMessage({type:'progress',pct:5, text:'Lanczos resampling A\u2026'});
-  const resA=lanczosResize(rgbaA,sw,sh,dw,dh);
-
-  self.postMessage({type:'progress',pct:15,text:'Lanczos resampling B\u2026'});
-  const resB=lanczosResize(rgbaB,sw,sh,dw,dh);
-
-  self.postMessage({type:'progress',pct:25,text:'linearising RGB\u2026'});
-  const linA=toLinearBuf(resA,n);
-  const linB=toLinearBuf(resB,n);
-
-  self.postMessage({type:'progress',pct:33,text:'analysing scene A\u2026'});
-  const aA=analyseScene(linA,dw,dh);
-
-  self.postMessage({type:'progress',pct:41,text:'analysing scene B\u2026'});
-  const aB=analyseScene(linB,dw,dh);
-
-  self.postMessage({type:'progress',pct:48,text:'computing adaptive weights\u2026'});
-  const{wA,wB}=computeWeightMaps(aA,aB,dw,dh,mode,params);
-
-  const usePyramid=['frequency','hsl','soft_light','overlay','screen'].includes(mode);
-  let fused,atA,atB;
-
-  if(usePyramid){
-    self.postMessage({type:'progress',pct:54,text:'building Laplacian pyramids\u2026'});
-    const pyrA=buildPyramid(linA,dw,dh);
-    const pyrB=buildPyramid(linB,dw,dh);
-
-    self.postMessage({type:'progress',pct:68,text:'fusing pyramid levels\u2026'});
-    const fp=fusePyramids(pyrA,pyrB,wA,wB,dw,dh,mode,params);
-
-    self.postMessage({type:'progress',pct:78,text:'collapsing pyramid\u2026'});
-    const collapsed=collapsePyramid(fp);
-    for(let i=0;i<collapsed.length;i++)collapsed[i]=Math.max(0,Math.min(1,collapsed[i]));
-
-    self.postMessage({type:'progress',pct:84,text:'HSL chroma correction\u2026'});
-    const ca=mode==='hsl'?0.7:0.35;
-    fused=hslChromaPass(collapsed,linA,linB,wA,wB,n,ca);
-    atA=wA;atB=wB;
-  }else{
-    self.postMessage({type:'progress',pct:58,text:'blending\u2026'});
-    const result=blendDirect(linA,linB,wA,wB,n,mode,params);
-    fused=result.out;atA=result.atA;atB=result.atB;
-
-    self.postMessage({type:'progress',pct:76,text:'colour harmonisation\u2026'});
-    fused=hslChromaPass(fused,linA,linB,wA,wB,n,0.2);
-  }
-
-  self.postMessage({type:'progress',pct:88,text:'unsharp mask\u2026'});
-  const sharpened=unsharpAmount>0?unsharpMask(fused,dw,dh,unsharpAmount*0.45):fused;
-
-  self.postMessage({type:'progress',pct:94,text:'encoding sRGB\u2026'});
-  const rgba=toSRGBBuf(sharpened,n);
-  const rgbaAout=toSRGBBuf(linA,n);
-  const rgbaBout=toSRGBBuf(linB,n);
-
-  self.postMessage({type:'done',rgba,rgbaAout,rgbaBout,atA,atB,dw,dh},
-    [rgba.buffer,rgbaAout.buffer,rgbaBout.buffer,atA.buffer,atB.buffer]);
-};
-`;
-
-// ─────────────────────────────────────────────────────────────
-// MAIN THREAD
-// ─────────────────────────────────────────────────────────────
-const S={
-  imgA:null,imgB:null,
-  resA:null,resB:null,
-  outData:null,attrA:null,attrB:null,
-  w:0,h:0,lowSrc:'A',
-  busy:false,timer:null,worker:null,
-};
-
-function setStatus(m){document.getElementById('statusMsg').textContent=m;}
-function setRight(m){document.getElementById('statusRight').textContent=m;}
-function setProgress(pct,text){
-  document.getElementById('progressBar').style.width=pct+'%';
-  if(text)document.getElementById('loadingText').textContent=text;
-}
-const WORKER='https://pixelcomposer-api.pixelcomposerapp.workers.dev';
-let _uid=localStorage.getItem('pc_uid');
-if(!_uid){_uid=crypto.randomUUID();localStorage.setItem('pc_uid',_uid);}
-const _ref=new URLSearchParams(location.search).get('ref')||document.referrer.slice(0,128)||'';
-function track(event){
-  fetch(WORKER+'/track',{method:'POST',headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({uid:_uid,event,ref:_ref})}).catch(()=>{});
-}
-track('page_open');
-
-// Load image — store FULL original resolution, only scale preview
-function loadFromFile(file,slot){
-  const reader=new FileReader();
-  reader.onload=e=>{
-    const img=new Image();
-    img.onload=()=>{
-      // Full-res offscreen — no MAX cap
-      const off=document.createElement('canvas');
-      off.width=img.naturalWidth; off.height=img.naturalHeight;
-      off.getContext('2d').drawImage(img,0,0);
-      const data=off.getContext('2d').getImageData(0,0,off.width,off.height);
-      if(slot==='A') S.imgA=data; else S.imgB=data;
-
-      // Preview only — separate canvas, scaled down for display
-      const pv=document.getElementById('canvas'+slot);
-      const dz=document.getElementById('drop'+slot);
-      const scale=Math.min(1,(dz.clientWidth-4)/img.naturalWidth,(dz.clientHeight-4)/img.naturalHeight);
-      pv.width=Math.round(img.naturalWidth*scale);
-      pv.height=Math.round(img.naturalHeight*scale);
-      pv.getContext('2d').drawImage(img,0,0,pv.width,pv.height);
-      pv.style.display='block';
-      document.getElementById('hint'+slot).style.display='none';
-      document.getElementById('drop'+slot).classList.add('loaded');
-      document.getElementById('info'+slot).textContent=`${img.naturalWidth}×${img.naturalHeight}`;
-      setStatus(`image ${slot} loaded — ${img.naturalWidth}×${img.naturalHeight} (full resolution preserved)`);
-      track('image_upload');
-      stopExample();
-      checkResWarn();
-      scheduleCompose();
-    };
-    img.src=e.target.result;
-  };
-  reader.readAsDataURL(file);
-}
-
-document.getElementById('fileA').addEventListener('change',e=>{if(e.target.files[0])loadFromFile(e.target.files[0],'A');});
-document.getElementById('fileB').addEventListener('change',e=>{if(e.target.files[0])loadFromFile(e.target.files[0],'B');});
-
-function onDrag(e,slot){e.preventDefault();document.getElementById('drop'+slot).classList.add('drag-over');}
-function offDrag(slot){document.getElementById('drop'+slot).classList.remove('drag-over');}
-function onDrop(e,slot){
-  e.preventDefault();offDrag(slot);
-  const f=e.dataTransfer.files[0];
-  if(f&&f.type.startsWith('image/'))loadFromFile(f,slot);
-}
-
-function swapImages(){
-  if(!S.imgA&&!S.imgB)return;
-  [S.imgA,S.imgB]=[S.imgB,S.imgA];
-  const cA=document.getElementById('canvasA');
-  const cB=document.getElementById('canvasB');
-  const hA=document.getElementById('hintA');
-  const hB=document.getElementById('hintB');
-  const iA=document.getElementById('infoA');
-  const iB=document.getElementById('infoB');
-  // Swap canvas pixels
-  const tmpCanvas=document.createElement('canvas');
-  tmpCanvas.width=cA.width;tmpCanvas.height=cA.height;
-  tmpCanvas.getContext('2d').drawImage(cA,0,0);
-  cA.width=cB.width;cA.height=cB.height;
-  cA.getContext('2d').drawImage(cB,0,0);
-  cB.width=tmpCanvas.width;cB.height=tmpCanvas.height;
-  cB.getContext('2d').drawImage(tmpCanvas,0,0);
-  // Swap visibility
-  const aLoaded=S.imgA!=null;const bLoaded=S.imgB!=null;
-  cA.style.display=aLoaded?'block':'none';
-  cB.style.display=bLoaded?'block':'none';
-  hA.style.display=aLoaded?'none':'block';
-  hB.style.display=bLoaded?'none':'block';
-  // Swap info text
-  const tmp=iA.textContent;iA.textContent=iB.textContent;iB.textContent=tmp;
-  scheduleCompose();
-}
-
-// Resolution
-function getTargetRes(){
-  const mode=document.getElementById('resolutionSelect').value;
-  const map={hd:{width:1280,height:720},fhd:{width:1920,height:1080},qhd:{width:2560,height:1440},'4k':{width:3840,height:2160},square:{width:1080,height:1080}};
-  if(map[mode])return map[mode];
-  if(mode==='original'){
-    const w=Math.max(S.imgA?S.imgA.width:0,S.imgB?S.imgB.width:0)||1920;
-    const h=Math.max(S.imgA?S.imgA.height:0,S.imgB?S.imgB.height:0)||1080;
-    return{width:w,height:h};
-  }
-  return{
-    width:Math.max(64,parseInt(document.getElementById('customWidth').value)||1920),
-    height:Math.max(64,parseInt(document.getElementById('customHeight').value)||1080),
-  };
-}
-
-function checkResWarn(){
-  if(!S.imgA||!S.imgB)return;
-  const{width:dw,height:dh}=getTargetRes();
-  const srcW=Math.max(S.imgA.width,S.imgB.width);
-  const srcH=Math.max(S.imgA.height,S.imgB.height);
-  document.getElementById('resWarn').style.display=(dw>srcW||dh>srcH)?'block':'none';
-}
-
-// Normalise both inputs to same size before sending to worker
-function normalise(imgData,tw,th){
-  if(imgData.width===tw&&imgData.height===th)return new Uint8ClampedArray(imgData.data);
-  const src=document.createElement('canvas');
-  src.width=imgData.width;src.height=imgData.height;
-  src.getContext('2d').putImageData(imgData,0,0);
-  const dst=document.createElement('canvas');dst.width=tw;dst.height=th;
-  const dctx=dst.getContext('2d');
-  dctx.imageSmoothingEnabled=true;dctx.imageSmoothingQuality='high';
-  dctx.drawImage(src,0,0,tw,th);
-  return new Uint8ClampedArray(dctx.getImageData(0,0,tw,th).data);
-}
-
-// Schedule compose with debounce
-function scheduleCompose(){
-  if(!S.imgA||!S.imgB)return;
-  clearTimeout(S.timer);
-  S.timer=setTimeout(compose,120);
-}
-
-function compose(){
-  if(!S.imgA||!S.imgB||S.busy)return;
-  S.busy=true;
-  track('compose');
-  if(S.worker){S.worker.terminate();S.worker=null;}
-
-  const overlay=document.getElementById('loadingOverlay');
-  overlay.classList.add('active');
-  setProgress(0,'preparing…');
-
-  const{width:dw,height:dh}=getTargetRes();
-  const mode=document.getElementById('modeSelect').value;
-  const sigma=parseFloat(document.getElementById('sigmaSlider').value);
-  const alpha=parseFloat(document.getElementById('alphaSlider').value)/100;
-  const unsharpAmount=parseFloat(document.getElementById('unsharpSlider').value)/100;
-
-  // Use the larger of the two inputs as the common source size
-  const srcW=Math.max(S.imgA.width,S.imgB.width);
-  const srcH=Math.max(S.imgA.height,S.imgB.height);
-
-  const normA=normalise(S.imgA,srcW,srcH);
-  const normB=normalise(S.imgB,srcW,srcH);
-
-  const blob=new Blob([WORKER_SRC],{type:'application/javascript'});
-  const url=URL.createObjectURL(blob);
-  S.worker=new Worker(url);
-
-  S.worker.onmessage=e=>{
-    const msg=e.data;
-    if(msg.type==='progress'){setProgress(msg.pct,msg.text);return;}
-    if(msg.type==='done'){
-      URL.revokeObjectURL(url);
-      const{rgba,rgbaAout,rgbaBout,atA,atB,dw:ow,dh:oh}=msg;
-      S.w=ow;S.h=oh;
-      S.outData=new ImageData(rgba,ow,oh);
-      S.resA=new ImageData(rgbaAout,ow,oh);
-      S.resB=new ImageData(rgbaBout,ow,oh);
-      S.attrA=atA;S.attrB=atB;
-
-      const c=document.getElementById('canvasOut');
-      c.width=ow;c.height=oh;
-      c.getContext('2d').putImageData(S.outData,0,0);
-      c.style.display='block';
-      document.getElementById('outPlaceholder').style.display='none';
-      document.getElementById('infoOut').textContent=`${ow}×${oh} · ${mode}`;
-      document.getElementById('inspMode').textContent=`linear RGB · ${mode}`;
-      document.getElementById('exportBtn').disabled=false;
-      setProgress(100,'done');
-      overlay.classList.remove('active');
-      S.busy=false;S.worker=null;
-      setStatus(`composed · ${mode} · ${ow}×${oh} · linear RGB · Lanczos-3`);
-      setRight(`src A:${S.imgA.width}×${S.imgA.height}  B:${S.imgB.width}×${S.imgB.height}  →  ${ow}×${oh}`);
-    }
-  };
-
-  S.worker.onerror=err=>{
-    setStatus(`error: ${err.message}`);
-    overlay.classList.remove('active');
-    S.busy=false;
-    URL.revokeObjectURL(url);
-  };
-
-  S.worker.postMessage({
-    rgbaA:normA,rgbaB:normB,
-    sw:srcW,sh:srcH,dw,dh,
-    mode,
-    params:{alpha,sigma,lowSrc:S.lowSrc},
-    unsharpAmount,
-  },[normA.buffer,normB.buffer]);
-}
-
-// Inspector
-document.getElementById('canvasOut').addEventListener('mousemove',inspectPx);
-document.getElementById('canvasOut').addEventListener('click',inspectPx);
-
-function inspectPx(e){
-  if(!S.outData||!S.resA||!S.resB)return;
-  const c=document.getElementById('canvasOut');
-  const rect=c.getBoundingClientRect();
-  const x=Math.floor((e.clientX-rect.left)*c.width/rect.width);
-  const y=Math.floor((e.clientY-rect.top)*c.height/rect.height);
-  if(x<0||y<0||x>=S.w||y>=S.h)return;
-  document.getElementById('inspCoord').textContent=`x:${x}  y:${y}`;
-  const idx=(y*S.w+x)*4;
-  const px=(data,sw,vl)=>{
-    const r=data[idx],g=data[idx+1],b=data[idx+2];
-    const hex=`#${r.toString(16).padStart(2,'0')}${g.toString(16).padStart(2,'0')}${b.toString(16).padStart(2,'0')}`;
-    document.getElementById(sw).style.background=hex;
-    document.getElementById(vl).textContent=`rgb(${r},${g},${b})`;
-  };
-  px(S.resA.data,'swatchA','valA');
-  px(S.resB.data,'swatchB','valB');
-  px(S.outData.data,'swatchOut','valOut');
-  const pi=y*S.w+x;
-  if(S.attrA&&S.attrB){
-    document.getElementById('contribA').textContent=(S.attrA[pi]*100).toFixed(1)+'%';
-    document.getElementById('contribB').textContent=(S.attrB[pi]*100).toFixed(1)+'%';
-  }
-}
-
-// Controls
-function setLowSrc(src){
-  S.lowSrc=src;
-  document.getElementById('btnLowA').classList.toggle('active',src==='A');
-  document.getElementById('btnLowB').classList.toggle('active',src==='B');
-  scheduleCompose();
-}
-document.getElementById('modeSelect').addEventListener('change',()=>{
-  const m=document.getElementById('modeSelect').value;
-  document.getElementById('freqControls').style.display=m==='frequency'?'block':'none';
-  document.getElementById('alphaControls').style.display=m==='normal'?'block':'none';
-  scheduleCompose();
-});
-({
-  sigmaSlider:['sigmaDisplay',''],
-  alphaSlider:['alphaDisplay','%'],
-  unsharpSlider:['unsharpDisplay','%'],
-}||({}));
-[['sigmaSlider','sigmaDisplay',''],['alphaSlider','alphaDisplay','%'],['unsharpSlider','unsharpDisplay','%']].forEach(([id,disp,suf])=>{
-  document.getElementById(id).addEventListener('input',function(){
-    document.getElementById(disp).textContent=this.value+suf;
-    scheduleCompose();
-  });
-});
-document.getElementById('resolutionSelect').addEventListener('change',function(){
-  document.getElementById('customBox').style.display=this.value==='custom'?'flex':'none';
-  checkResWarn();scheduleCompose();
-});
-['customWidth','customHeight'].forEach(id=>{
-  document.getElementById(id).addEventListener('input',()=>{checkResWarn();scheduleCompose();});
-});
-
-// Export
-document.getElementById('exportBtn').addEventListener('click',()=>{
-  if(!S.outData)return;
-  const c=document.createElement('canvas');c.width=S.w;c.height=S.h;
-  c.getContext('2d').putImageData(S.outData,0,0);
-  const a=document.createElement('a');
-  a.href=c.toDataURL('image/png');
-  a.download=`pixelcomposer_${S.w}x${S.h}.png`;
-  a.click();
-  track('export');
-  setStatus(`exported · ${S.w}×${S.h} PNG`);
-});
-
-// ── Example loop ──────────────────────────────────────────────
-const EX = {
-  running: true,
-  frame: 0,
-  timer: null,
-  t: 0,
-  paused: false,
-};
-
-// Generate procedural gradient pair and blend them on the example canvas
-function exampleTick() {
-  if (!EX.running || EX.paused) return;
-  const c = document.getElementById('exampleCanvas');
-  const ctx = c.getContext('2d');
-  const w = c.width, h = c.height;
-  EX.t += 0.012;
-  const t = EX.t;
-
-  // Image A — shifting gradient
-  const gA = ctx.createLinearGradient(
-    w * (0.5 + 0.5 * Math.sin(t)),
-    0,
-    w * (0.5 + 0.5 * Math.cos(t * 0.7)),
-    h
-  );
-  const hA = (t * 40) % 360;
-  gA.addColorStop(0, `hsl(${hA},90%,55%)`);
-  gA.addColorStop(1, `hsl(${hA + 120},90%,35%)`);
-
-  // Image B — complementary gradient
-  const gB = ctx.createLinearGradient(
-    0,
-    h * (0.5 + 0.4 * Math.sin(t * 0.8 + 1)),
-    w,
-    h * (0.5 + 0.4 * Math.cos(t * 0.6))
-  );
-  const hB = (hA + 180) % 360;
-  gB.addColorStop(0, `hsl(${hB},85%,50%)`);
-  gB.addColorStop(1, `hsl(${hB + 80},85%,30%)`);
-
-  // Draw A
-  const offA = document.createElement('canvas');
-  offA.width = w; offA.height = h;
-  const ctxA = offA.getContext('2d');
-  ctxA.fillStyle = gA; ctxA.fillRect(0, 0, w, h);
-
-  // Draw B
-  const offB = document.createElement('canvas');
-  offB.width = w; offB.height = h;
-  const ctxB = offB.getContext('2d');
-  ctxB.fillStyle = gB; ctxB.fillRect(0, 0, w, h);
-
-  // Blend using soft light in canvas
-  ctx.clearRect(0, 0, w, h);
-  ctx.drawImage(offA, 0, 0);
-  ctx.globalCompositeOperation = 'soft-light';
-  ctx.drawImage(offB, 0, 0);
-  ctx.globalCompositeOperation = 'source-over';
-
-  // Mode label cycling
-  const modes = ['soft light','screen','overlay','hsl blend','frequency'];
-  const modeIdx = Math.floor(t / 2) % modes.length;
-  document.getElementById('exampleLabel').textContent =
-    `mode: ${modes[modeIdx]} — upload two images to try it yourself ↑`;
-
-  EX.frame++;
-}
-
-function toggleExample() {
-  EX.paused = !EX.paused;
-  const hint = document.querySelector('#exampleWidget span:last-of-type');
-  if (hint) hint.textContent = EX.paused
-    ? 'example — click to resume'
-    : 'example — click to pause';
-}
-
-function stopExample() {
-  EX.paused = true;
-  document.getElementById('exampleWidget').style.opacity = '0.4';
-}
-
-EX.timer = setInterval(exampleTick, 40); // ~25fps
-
-// Init
-document.getElementById('freqControls').style.display='none';
-document.getElementById('alphaControls').style.display='none';
-setStatus('load two images to begin');
-
-// ── Feedback modal ────────────────────────────────────────────
-let fbRating=0;
-function openFeedback(){
-  fbRating=0;
-  document.getElementById('fbText').value='';
-  document.getElementById('fbThanks').style.display='none';
-  document.getElementById('fbForm').style.display='flex';
-  document.querySelectorAll('.fb-star').forEach(s=>s.classList.remove('active'));
-  document.getElementById('fbOverlay').classList.add('active');
-}
-function closeFeedback(){document.getElementById('fbOverlay').classList.remove('active');}
-function setRating(n){
-  fbRating=n;
-  document.querySelectorAll('.fb-star').forEach((s,i)=>s.classList.toggle('active',i<n));
-}
-function submitFeedback(){
-  const text=document.getElementById('fbText').value.trim();
-  if(!text&&!fbRating)return;
-  document.getElementById('fbSubmit').disabled=true;
-  const WORKER='https://pixelcomposer-api.pixelcomposerapp.workers.dev';
-  fetch(WORKER+'/feedback',{
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({rating:fbRating,message:text||'',uid:_uid})
-  })
-  .then(r=>r.json())
-  .catch(()=>({ok:false}));
-  document.getElementById('fbForm').style.display='none';
-  document.getElementById('fbThanks').style.display='block';
-  document.getElementById('fbSubmit').disabled=false;
-  setTimeout(closeFeedback,1800);
-}
-</script>
-
+<!-- FEEDBACK MODAL -->
 <div class="fb-overlay" id="fbOverlay" onclick="if(event.target===this)closeFeedback()">
   <div class="fb-modal">
     <div class="fb-title">rate PixelComposer</div>
@@ -1217,5 +417,1022 @@ function submitFeedback(){
     <div class="fb-thanks" id="fbThanks">✓ thank you — feedback received</div>
   </div>
 </div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// WEB WORKER SOURCE — ENGINE v2 + ALL FIXES
+// Pipeline: Lanczos → linearise → analyse → weights →
+//           pyramid fusion → ACES tone map → low-freq restore →
+//           edge-aware sharpen → HSL chroma (gentle) → dither → sRGB
+// ═══════════════════════════════════════════════════════════════
+const WORKER_SRC = `
+
+function toLinear(v){v/=255;return v<=0.04045?v/12.92:Math.pow((v+0.055)/1.055,2.4);}
+function toSRGB(v){v=Math.max(0,Math.min(1,v));return(v<=0.0031308?v*12.92*255:(1.055*Math.pow(v,1/2.4)-0.055)*255);}
+
+function toLinearBuf(rgba,n){
+  const lin=new Float32Array(n*3);
+  for(let i=0;i<n;i++){lin[i*3]=toLinear(rgba[i*4]);lin[i*3+1]=toLinear(rgba[i*4+1]);lin[i*3+2]=toLinear(rgba[i*4+2]);}
+  return lin;
+}
+function toSRGBBuf(lin,n){
+  const out=new Uint8ClampedArray(n*4);
+  for(let i=0;i<n;i++){out[i*4]=toSRGB(lin[i*3])|0;out[i*4+1]=toSRGB(lin[i*3+1])|0;out[i*4+2]=toSRGB(lin[i*3+2])|0;out[i*4+3]=255;}
+  return out;
+}
+
+// Lanczos-3
+function lanczosK(x,a){if(x===0)return 1;if(Math.abs(x)>=a)return 0;const px=Math.PI*x;return(a*Math.sin(px)*Math.sin(px/a))/(px*px);}
+function lanczosResize(src,sw,sh,dw,dh){
+  const a=3,tmp=new Float32Array(dw*sh*4),out=new Uint8ClampedArray(dw*dh*4),xR=sw/dw;
+  for(let y=0;y<sh;y++){for(let x=0;x<dw;x++){
+    const sx=(x+0.5)*xR-0.5,x0=Math.floor(sx)-a+1;
+    let r=0,g=0,b=0,al=0,ws=0;
+    for(let k=x0;k<=x0+2*a-1;k++){const kv=lanczosK(sx-k,a),px=Math.max(0,Math.min(sw-1,k)),si=(y*sw+px)*4;r+=src[si]*kv;g+=src[si+1]*kv;b+=src[si+2]*kv;al+=src[si+3]*kv;ws+=kv;}
+    const di=(y*dw+x)*4;tmp[di]=ws?r/ws:0;tmp[di+1]=ws?g/ws:0;tmp[di+2]=ws?b/ws:0;tmp[di+3]=ws?al/ws:255;
+  }}
+  const yR=sh/dh;
+  for(let y=0;y<dh;y++){for(let x=0;x<dw;x++){
+    const sy=(y+0.5)*yR-0.5,y0=Math.floor(sy)-a+1;
+    let r=0,g=0,b=0,ws=0;
+    for(let k=y0;k<=y0+2*a-1;k++){const kv=lanczosK(sy-k,a),py=Math.max(0,Math.min(sh-1,k)),si=(py*dw+x)*4;r+=tmp[si]*kv;g+=tmp[si+1]*kv;b+=tmp[si+2]*kv;ws+=kv;}
+    const di=(y*dw+x)*4;out[di]=Math.max(0,Math.min(255,ws?r/ws:0));out[di+1]=Math.max(0,Math.min(255,ws?g/ws:0));out[di+2]=Math.max(0,Math.min(255,ws?b/ws:0));out[di+3]=255;
+  }}
+  return out;
+}
+
+// Gaussian blur — single channel (Float32Array length n)
+function gaussBlur1ch(data,w,h,sigma){
+  const r=Math.max(1,Math.ceil(3*sigma))|0,ks=2*r+1,k=new Float32Array(ks);
+  let s=0;for(let i=0;i<ks;i++){const x=i-r;k[i]=Math.exp(-(x*x)/(2*sigma*sigma));s+=k[i];}
+  for(let i=0;i<ks;i++)k[i]/=s;
+  const tmp=new Float32Array(w*h),out=new Float32Array(w*h);
+  for(let y=0;y<h;y++){for(let x=0;x<w;x++){let v=0;for(let ki=-r;ki<=r;ki++){v+=data[y*w+Math.max(0,Math.min(w-1,x+ki))]*k[ki+r];}tmp[y*w+x]=v;}}
+  for(let y=0;y<h;y++){for(let x=0;x<w;x++){let v=0;for(let ki=-r;ki<=r;ki++){v+=tmp[Math.max(0,Math.min(h-1,y+ki))*w+x]*k[ki+r];}out[y*w+x]=v;}}
+  return out;
+}
+
+// Gaussian blur — 3ch Float32Array
+function gaussBlur(data,w,h,sigma){
+  const r=Math.max(1,Math.ceil(3*sigma))|0,ks=2*r+1,k=new Float32Array(ks);
+  let s=0;for(let i=0;i<ks;i++){const x=i-r;k[i]=Math.exp(-(x*x)/(2*sigma*sigma));s+=k[i];}
+  for(let i=0;i<ks;i++)k[i]/=s;
+  const tmp=new Float32Array(w*h*3),out=new Float32Array(w*h*3);
+  for(let y=0;y<h;y++){for(let x=0;x<w;x++){
+    let r0=0,g0=0,b0=0;
+    for(let ki=-r;ki<=r;ki++){const px=Math.max(0,Math.min(w-1,x+ki)),si=(y*w+px)*3,kv=k[ki+r];r0+=data[si]*kv;g0+=data[si+1]*kv;b0+=data[si+2]*kv;}
+    const di=(y*w+x)*3;tmp[di]=r0;tmp[di+1]=g0;tmp[di+2]=b0;
+  }}
+  for(let y=0;y<h;y++){for(let x=0;x<w;x++){
+    let r0=0,g0=0,b0=0;
+    for(let ki=-r;ki<=r;ki++){const py=Math.max(0,Math.min(h-1,y+ki)),si=(py*w+x)*3,kv=k[ki+r];r0+=tmp[si]*kv;g0+=tmp[si+1]*kv;b0+=tmp[si+2]*kv;}
+    const di=(y*w+x)*3;out[di]=r0;out[di+1]=g0;out[di+2]=b0;
+  }}
+  return out;
+}
+
+// Luminance BT.709
+function lum(lin,i){return 0.2126*lin[i*3]+0.7152*lin[i*3+1]+0.0722*lin[i*3+2];}
+
+// ── SCENE ANALYSIS — continuous soft fields, no hard classes ──
+function analyseScene(lin,w,h){
+  const n=w*h;
+  const edgeMap=new Float32Array(n);
+  const varMap=new Float32Array(n);
+  const lumMap=new Float32Array(n);
+  for(let i=0;i<n;i++)lumMap[i]=lum(lin,i);
+
+  // Sobel on luminance
+  for(let y=1;y<h-1;y++){for(let x=1;x<w-1;x++){
+    const i=y*w+x;
+    const gx=(-lumMap[(y-1)*w+(x-1)]+lumMap[(y-1)*w+(x+1)]-2*lumMap[y*w+(x-1)]+2*lumMap[y*w+(x+1)]-lumMap[(y+1)*w+(x-1)]+lumMap[(y+1)*w+(x+1)]);
+    const gy=(-lumMap[(y-1)*w+(x-1)]-2*lumMap[(y-1)*w+x]-lumMap[(y-1)*w+(x+1)]+lumMap[(y+1)*w+(x-1)]+2*lumMap[(y+1)*w+x]+lumMap[(y+1)*w+(x+1)]);
+    edgeMap[i]=Math.sqrt(gx*gx+gy*gy);
+  }}
+  let eMax=0;for(let i=0;i<n;i++)if(edgeMap[i]>eMax)eMax=edgeMap[i];
+  if(eMax>0)for(let i=0;i<n;i++)edgeMap[i]/=eMax;
+
+  // Local variance 5x5
+  for(let y=2;y<h-2;y++){for(let x=2;x<w-2;x++){
+    let sum=0,sum2=0,cnt=0;
+    for(let dy=-2;dy<=2;dy++){for(let dx=-2;dx<=2;dx++){const v=lumMap[(y+dy)*w+(x+dx)];sum+=v;sum2+=v*v;cnt++;}}
+    const mean=sum/cnt;varMap[y*w+x]=Math.max(0,sum2/cnt-mean*mean);
+  }}
+  let vMax=0;for(let i=0;i<n;i++)if(varMap[i]>vMax)vMax=varMap[i];
+  if(vMax>0)for(let i=0;i<n;i++)varMap[i]/=vMax;
+
+  // Percentile thresholds
+  const step=Math.max(1,Math.floor(n/2048));const smp=[];
+  for(let i=0;i<n;i+=step)smp.push(lumMap[i]);smp.sort((a,b)=>a-b);
+  const p15=smp[Math.floor(smp.length*0.15)]||0.1;
+  const p85=smp[Math.floor(smp.length*0.85)]||0.9;
+
+  // CONTINUOUS scene score fields (no hard discrete classes)
+  const structure=edgeMap;           // 0–1: edge presence
+  const texture=varMap;              // 0–1: local detail
+  const toneField=new Float32Array(n); // 0–1: mid-tone vs extreme
+  for(let i=0;i<n;i++)toneField[i]=1-Math.abs(lumMap[i]-0.5)*2;
+
+  return{edgeMap,varMap,lumMap,structure,texture,toneField,p15,p85};
+}
+
+// ── ADAPTIVE WEIGHT MAPS ──────────────────────────────────────
+// Uses continuous scene fields — no hard region switching
+// Weights blurred AFTER computation to eliminate grid noise
+function computeWeightMaps(aA,aB,w,h,mode,params){
+  const n=w*h;
+  const wA=new Float32Array(n);
+  const wB=new Float32Array(n);
+  const lowSrc=params.lowSrc||'A';
+
+  for(let i=0;i<n;i++){
+    const eA=aA.edgeMap[i],eB=aB.edgeMap[i];
+    const vA=aA.varMap[i], vB=aB.varMap[i];
+    const lA=aA.lumMap[i], lB=aB.lumMap[i];
+    const sA=aA.structure[i],sB=aB.structure[i];
+    const tA=aA.texture[i], tB=aB.texture[i];
+
+    const eT=eA+eB+1e-8,vT=vA+vB+1e-8;
+    const lcA=Math.abs(lA-0.5),lcB=Math.abs(lB-0.5),lcT=lcA+lcB+1e-8;
+    const eWA=eA/eT,eWB=eB/eT,vWA=vA/vT,vWB=vB/vT,lcWA=lcA/lcT,lcWB=lcB/lcT;
+
+    let wa,wb;
+    if(mode==='frequency'){
+      if(lowSrc==='A'){wa=0.5+0.3*(lcWA-0.5)-0.2*eWB;wb=1-wa;}
+      else{wb=0.5+0.3*(lcWB-0.5)-0.2*eWA;wa=1-wb;}
+    }else if(mode==='detail'){
+      wb=0.35+0.4*eWB+0.25*vWB;wa=1-wb;
+    }else if(mode==='soft_light'||mode==='overlay'){
+      wa=0.35+0.3*lcWA+0.35*vWA;wb=0.35+0.3*lcWB+0.35*vWB;
+    }else if(mode==='screen'){
+      wa=0.3+0.4*lcWA+0.3*eWA;wb=0.3+0.4*lcWB+0.3*eWB;
+    }else if(mode==='hsl'){
+      wa=0.3+0.4*vWA+0.3*lcWA;wb=0.3+0.4*vWB+0.3*lcWB;
+    }else{
+      wa=0.34+0.33*eWA+0.33*vWA;wb=0.34+0.33*eWB+0.33*vWB;
+    }
+    const t=wa+wb+1e-8;wA[i]=wa/t;wB[i]=wb/t;
+  }
+
+  // ── BLUR WEIGHT MAPS to eliminate grid/block artifacts ──
+  const wAblur=gaussBlur1ch(wA,w,h,1.2);
+  const wBblur=gaussBlur1ch(wB,w,h,1.2);
+  // Renormalise after blur
+  for(let i=0;i<n;i++){const t=wAblur[i]+wBblur[i]+1e-8;wA[i]=wAblur[i]/t;wB[i]=wBblur[i]/t;}
+
+  return{wA,wB};
+}
+
+// ── LAPLACIAN PYRAMID ─────────────────────────────────────────
+const PYRAMID_LEVELS=6;
+function downsample(data,w,h){
+  const dw=Math.max(1,w>>1),dh=Math.max(1,h>>1),out=new Float32Array(dw*dh*3);
+  for(let y=0;y<dh;y++){for(let x=0;x<dw;x++){
+    let r=0,g=0,b=0,cnt=0;
+    for(let dy=0;dy<2;dy++){for(let dx=0;dx<2;dx++){const sy=Math.min(h-1,y*2+dy),sx=Math.min(w-1,x*2+dx),si=(sy*w+sx)*3;r+=data[si];g+=data[si+1];b+=data[si+2];cnt++;}}
+    const di=(y*dw+x)*3;out[di]=r/cnt;out[di+1]=g/cnt;out[di+2]=b/cnt;
+  }}
+  return{data:out,w:dw,h:dh};
+}
+function upsample(data,sw,sh,dw,dh){
+  const out=new Float32Array(dw*dh*3);
+  for(let y=0;y<dh;y++){for(let x=0;x<dw;x++){
+    const fx=(x+0.5)*sw/dw-0.5,fy=(y+0.5)*sh/dh-0.5;
+    const x0=Math.max(0,Math.min(sw-1,Math.floor(fx))),x1=Math.max(0,Math.min(sw-1,x0+1));
+    const y0=Math.max(0,Math.min(sh-1,Math.floor(fy))),y1=Math.max(0,Math.min(sh-1,y0+1));
+    const tx=fx-Math.floor(fx),ty=fy-Math.floor(fy),di=(y*dw+x)*3;
+    for(let c=0;c<3;c++){
+      const v00=data[(y0*sw+x0)*3+c],v10=data[(y0*sw+x1)*3+c],v01=data[(y1*sw+x0)*3+c],v11=data[(y1*sw+x1)*3+c];
+      out[di+c]=(v00*(1-tx)+v10*tx)*(1-ty)+(v01*(1-tx)+v11*tx)*ty;
+    }
+  }}
+  return out;
+}
+function buildPyramid(lin,w,h){
+  const gauss=[{data:lin,w,h}];
+  for(let lv=1;lv<PYRAMID_LEVELS;lv++){const prev=gauss[lv-1];gauss.push(downsample(gaussBlur(prev.data,prev.w,prev.h,1.0),prev.w,prev.h));}
+  const pyr=[];
+  for(let lv=0;lv<PYRAMID_LEVELS-1;lv++){
+    const curr=gauss[lv],next=gauss[lv+1],up=upsample(next.data,next.w,next.h,curr.w,curr.h),lap=new Float32Array(curr.data.length);
+    for(let i=0;i<curr.data.length;i++)lap[i]=curr.data[i]-up[i];
+    pyr.push({lap,w:curr.w,h:curr.h});
+  }
+  const base=gauss[PYRAMID_LEVELS-1];pyr.push({lap:base.data,w:base.w,h:base.h});
+  return pyr;
+}
+function collapsePyramid(pyr){
+  let cur=pyr[PYRAMID_LEVELS-1].lap,cw=pyr[PYRAMID_LEVELS-1].w,ch=pyr[PYRAMID_LEVELS-1].h;
+  for(let lv=PYRAMID_LEVELS-2;lv>=0;lv--){
+    const up=upsample(cur,cw,ch,pyr[lv].w,pyr[lv].h),lap=pyr[lv].lap,out=new Float32Array(lap.length);
+    for(let i=0;i<lap.length;i++)out[i]=up[i]+lap[i];
+    cur=out;cw=pyr[lv].w;ch=pyr[lv].h;
+  }
+  return cur;
+}
+
+// ── PYRAMID FUSION ────────────────────────────────────────────
+// Level weight resampling uses Gaussian-weighted sampling
+// to prevent seams between pyramid layers
+function fusePyramids(pyrA,pyrB,wA,wB,w,h,mode,params){
+  const fusedPyr=[];
+  for(let lv=0;lv<PYRAMID_LEVELS;lv++){
+    const levA=pyrA[lv],levB=pyrB[lv],lw=levA.w,lh=levA.h,ln=lw*lh;
+    let levelWA,levelWB;
+    if(lv===0){levelWA=wA;levelWB=wB;}
+    else{
+      levelWA=new Float32Array(ln);levelWB=new Float32Array(ln);
+      const scX=w/lw,scY=h/lh;
+      for(let y=0;y<lh;y++){for(let x=0;x<lw;x++){
+        let sa=0,sb=0,wt=0;
+        const x0=Math.floor(x*scX),x1=Math.min(w-1,Math.ceil((x+1)*scX));
+        const y0=Math.floor(y*scY),y1=Math.min(h-1,Math.ceil((y+1)*scY));
+        for(let sy=y0;sy<=y1;sy++){for(let sx=x0;sx<=x1;sx++){
+          // Gaussian-weighted contribution — fixes seams
+          const dx=sx-x*scX,dy=sy-y*scY;
+          const gw=Math.exp(-(dx*dx+dy*dy)/2.0);
+          sa+=wA[sy*w+sx]*gw;sb+=wB[sy*w+sx]*gw;wt+=gw;
+        }}
+        levelWA[y*lw+x]=wt?sa/wt:0.5;levelWB[y*lw+x]=wt?sb/wt:0.5;
+      }}
+    }
+    const dA=levA.lap,dB=levB.lap,fused=new Float32Array(lw*lh*3);
+    if(lv<PYRAMID_LEVELS-1){
+      for(let i=0;i<ln;i++){const p=i*3,wa=levelWA[i],wb=levelWB[i];fused[p]=dA[p]*wa+dB[p]*wb;fused[p+1]=dA[p+1]*wa+dB[p+1]*wb;fused[p+2]=dA[p+2]*wa+dB[p+2]*wb;}
+    }else{
+      const alpha=params.alpha||0.5;
+      for(let i=0;i<ln;i++){
+        const p=i*3,wa=levelWA[i],wb=levelWB[i];
+        const ra=dA[p],ga=dA[p+1],ba=dA[p+2],rb=dB[p],gb=dB[p+1],bb=dB[p+2];
+        let r,g,b;
+        if(mode==='multiply'){r=ra*rb;g=ga*gb;b=ba*bb;}
+        else if(mode==='screen'){r=1-(1-ra)*(1-rb);g=1-(1-ga)*(1-gb);b=1-(1-ba)*(1-bb);}
+        else if(mode==='overlay'){const ov=(a,bv)=>a<0.5?2*a*bv:1-2*(1-a)*(1-bv);r=ov(ra,rb);g=ov(ga,gb);b=ov(ba,bb);}
+        else if(mode==='soft_light'){const sl=(a,bv)=>bv<0.5?a-(1-2*bv)*a*(1-a):a+(2*bv-1)*(Math.sqrt(Math.max(0,a))-a);r=sl(ra,rb);g=sl(ga,gb);b=sl(ba,bb);}
+        else if(mode==='difference'){r=Math.abs(ra-rb);g=Math.abs(ga-gb);b=Math.abs(ba-bb);}
+        else if(mode==='normal'){r=ra*(1-alpha)+rb*alpha;g=ga*(1-alpha)+gb*alpha;b=ba*(1-alpha)+bb*alpha;}
+        else{r=ra*wa+rb*wb;g=ga*wa+gb*wb;b=ba*wa+bb*wb;}
+        fused[p]=r*0.7+(ra*wa+rb*wb)*0.3;fused[p+1]=g*0.7+(ga*wa+gb*wb)*0.3;fused[p+2]=b*0.7+(ba*wa+bb*wb)*0.3;
+      }
+    }
+    fusedPyr.push({lap:fused,w:lw,h:lh});
+  }
+  return fusedPyr;
+}
+
+// ── ACES TONE MAPPING ────────────────────────────────────────
+// Fixes blown highlights, neon bloom, AI glow look
+function toneMapACES(x){
+  const a=2.51,b=0.03,c=2.43,d=0.59,e2=0.14;
+  return Math.max(0,Math.min(1,(x*(a*x+b))/(x*(c*x+d)+e2)));
+}
+function applyToneMap(data){
+  const out=new Float32Array(data.length);
+  for(let i=0;i<data.length;i++)out[i]=toneMapACES(data[i]);
+  return out;
+}
+
+// ── LOW-FREQUENCY RESTORATION ────────────────────────────────
+// Restores reflections and global structure that can be lost
+// in aggressive high-frequency fusion
+function lowFreqRestore(output,linA,linB,w,h){
+  const lowA=gaussBlur(linA,w,h,3.0);
+  const lowB=gaussBlur(linB,w,h,3.0);
+  const out=new Float32Array(output.length);
+  for(let i=0;i<output.length;i++){
+    const finalLow=(lowA[i]+lowB[i])*0.5;
+    out[i]=output[i]*0.75+finalLow*0.25;
+  }
+  return out;
+}
+
+// ── HSL CHROMA PASS (gentle — 0.1 to avoid instability) ─────
+function rgbToHsl(r,g,b){
+  const mx=Math.max(r,g,b),mn=Math.min(r,g,b),l=(mx+mn)/2;
+  if(mx===mn)return[0,0,l];
+  const d=mx-mn,s=l>0.5?d/(2-mx-mn):d/(mx+mn);
+  let h=0;if(mx===r)h=((g-b)/d+(g<b?6:0))/6;else if(mx===g)h=((b-r)/d+2)/6;else h=((r-g)/d+4)/6;
+  return[h,s,l];
+}
+function hslToRgb(h,s,l){
+  if(s===0)return[l,l,l];
+  const q=l<0.5?l*(1+s):l+s-l*s,p=2*l-q;
+  const hf=(p,q,t)=>{if(t<0)t+=1;if(t>1)t-=1;if(t<1/6)return p+(q-p)*6*t;if(t<1/2)return q;if(t<2/3)return p+(q-p)*(2/3-t)*6;return p;};
+  return[hf(p,q,h+1/3),hf(p,q,h),hf(p,q,h-1/3)];
+}
+function hslChromaPass(fused,linA,linB,wA,wB,n,amount){
+  if(amount<=0)return fused;
+  const out=new Float32Array(n*3);
+  for(let i=0;i<n;i++){
+    const p=i*3;
+    const[hF,sF,lF]=rgbToHsl(fused[p],fused[p+1],fused[p+2]);
+    const[hA,sA]=rgbToHsl(linA[p],linA[p+1],linA[p+2]);
+    const[hB,sB]=rgbToHsl(linB[p],linB[p+1],linB[p+2]);
+    let dh=hB-hA;if(dh>0.5)dh-=1;if(dh<-0.5)dh+=1;
+    const hBlend=(hA+dh*wB[i]+1)%1;
+    const sBlend=Math.min(1,(sA*wA[i]+sB*wB[i])*1.05);
+    // Luminance from pyramid is preserved — only chroma adjusted
+    const[rO,gO,bO]=hslToRgb(hF*(1-amount)+hBlend*amount,sF*(1-amount)+sBlend*amount,lF);
+    out[p]=rO;out[p+1]=gO;out[p+2]=bO;
+  }
+  return out;
+}
+
+// ── EDGE-AWARE SHARPENING ─────────────────────────────────────
+// Sharpens texture/flat regions, leaves edges alone
+// Prevents blocky branch artifacts and crunchy edges
+function edgeAwareUnsharp(lin,edgeMapA,edgeMapB,w,h,amount){
+  if(amount<=0)return lin;
+  const blurred=gaussBlur(lin,w,h,1.2);
+  const out=new Float32Array(lin.length);
+  const n=w*h;
+  for(let i=0;i<n;i++){
+    // Combined edge — use average of both images
+    const edge=(edgeMapA[i]+edgeMapB[i])*0.5;
+    // Suppress sharpening at strong edges (they're already sharp enough)
+    // and boost in mid-variance texture regions
+    const strength=amount*(1.0-edge*0.8);
+    const p=i*3;
+    // No intermediate clamping — defer to final encode
+    out[p]  =lin[p]  +strength*(lin[p]  -blurred[p]);
+    out[p+1]=lin[p+1]+strength*(lin[p+1]-blurred[p+1]);
+    out[p+2]=lin[p+2]+strength*(lin[p+2]-blurred[p+2]);
+  }
+  return out;
+}
+
+// ── DITHERING ─────────────────────────────────────────────────
+// Added before sRGB conversion to break up color banding
+// in gradients and sky regions
+function dither(lin){
+  const out=new Float32Array(lin.length);
+  for(let i=0;i<lin.length;i++)out[i]=lin[i]+(Math.random()-0.5)*0.003;
+  return out;
+}
+
+// ── DIRECT BLEND (non-pyramid modes) ─────────────────────────
+function blendDirect(linA,linB,wA,wB,n,mode,params){
+  const out=new Float32Array(n*3),atA=new Float32Array(n),atB=new Float32Array(n),alpha=params.alpha||0.5;
+  for(let i=0;i<n;i++){
+    const p=i*3,wa=wA[i],wb=wB[i];
+    const ra=linA[p],ga=linA[p+1],ba=linA[p+2],rb=linB[p],gb=linB[p+1],bb=linB[p+2];
+    let r,g,b;
+    if(mode==='normal'){r=ra*(1-alpha)+rb*alpha;g=ga*(1-alpha)+gb*alpha;b=ba*(1-alpha)+bb*alpha;}
+    else if(mode==='multiply'){r=ra*rb;g=ga*gb;b=ba*bb;}
+    else if(mode==='difference'){r=Math.abs(ra-rb);g=Math.abs(ga-gb);b=Math.abs(ba-bb);}
+    else if(mode==='detail'){r=rb*wb+ra*wa;g=gb*wb+ga*wa;b=bb*wb+ba*wa;}
+    else{r=ra*wa+rb*wb;g=ga*wa+gb*wb;b=ba*wa+bb*wb;}
+    out[p]=r*0.75+(ra*wa+rb*wb)*0.25;out[p+1]=g*0.75+(ga*wa+gb*wb)*0.25;out[p+2]=b*0.75+(ba*wa+bb*wb)*0.25;
+    atA[i]=wa;atB[i]=wb;
+  }
+  return{out,atA,atB};
+}
+
+// ── MAIN HANDLER ─────────────────────────────────────────────
+self.onmessage=function(e){
+  const{rgbaA,rgbaB,sw,sh,dw,dh,mode,params,unsharpAmount}=e.data;
+  const n=dw*dh;
+
+  self.postMessage({type:'progress',pct:4, text:'Lanczos resampling A\u2026'});
+  const resA=lanczosResize(rgbaA,sw,sh,dw,dh);
+  self.postMessage({type:'progress',pct:13,text:'Lanczos resampling B\u2026'});
+  const resB=lanczosResize(rgbaB,sw,sh,dw,dh);
+
+  self.postMessage({type:'progress',pct:22,text:'linearising RGB\u2026'});
+  const linA=toLinearBuf(resA,n);
+  const linB=toLinearBuf(resB,n);
+
+  self.postMessage({type:'progress',pct:30,text:'analysing scene A\u2026'});
+  const aA=analyseScene(linA,dw,dh);
+  self.postMessage({type:'progress',pct:38,text:'analysing scene B\u2026'});
+  const aB=analyseScene(linB,dw,dh);
+
+  self.postMessage({type:'progress',pct:45,text:'computing + smoothing weights\u2026'});
+  const{wA,wB}=computeWeightMaps(aA,aB,dw,dh,mode,params);
+
+  const usePyramid=['frequency','hsl','soft_light','overlay','screen'].includes(mode);
+  let fused,atA,atB;
+
+  if(usePyramid){
+    self.postMessage({type:'progress',pct:52,text:'building Laplacian pyramids\u2026'});
+    const pyrA=buildPyramid(linA,dw,dh);
+    const pyrB=buildPyramid(linB,dw,dh);
+
+    self.postMessage({type:'progress',pct:65,text:'fusing pyramid levels\u2026'});
+    const fp=fusePyramids(pyrA,pyrB,wA,wB,dw,dh,mode,params);
+
+    self.postMessage({type:'progress',pct:74,text:'collapsing pyramid\u2026'});
+    let collapsed=collapsePyramid(fp);
+
+    self.postMessage({type:'progress',pct:79,text:'ACES tone mapping\u2026'});
+    collapsed=applyToneMap(collapsed);
+
+    self.postMessage({type:'progress',pct:83,text:'low-freq restoration\u2026'});
+    collapsed=lowFreqRestore(collapsed,linA,linB,dw,dh);
+
+    self.postMessage({type:'progress',pct:86,text:'HSL chroma correction\u2026'});
+    // Gentle 0.1 amount — avoids color instability
+    const chromaAmt=mode==='hsl'?0.55:0.1;
+    fused=hslChromaPass(collapsed,linA,linB,wA,wB,n,chromaAmt);
+    atA=wA;atB=wB;
+  }else{
+    self.postMessage({type:'progress',pct:55,text:'blending\u2026'});
+    const result=blendDirect(linA,linB,wA,wB,n,mode,params);
+    fused=result.out;atA=result.atA;atB=result.atB;
+    self.postMessage({type:'progress',pct:75,text:'colour harmonisation\u2026'});
+    fused=hslChromaPass(fused,linA,linB,wA,wB,n,0.08);
+  }
+
+  self.postMessage({type:'progress',pct:89,text:'edge-aware sharpening\u2026'});
+  const sharpened=unsharpAmount>0
+    ?edgeAwareUnsharp(fused,aA.edgeMap,aB.edgeMap,dw,dh,unsharpAmount*0.45)
+    :fused;
+
+  self.postMessage({type:'progress',pct:93,text:'dithering\u2026'});
+  const dithered=dither(sharpened);
+
+  // Final clamp only at encode stage
+  self.postMessage({type:'progress',pct:96,text:'encoding sRGB\u2026'});
+  const rgba=toSRGBBuf(dithered,n);
+  const rgbaAout=toSRGBBuf(linA,n);
+  const rgbaBout=toSRGBBuf(linB,n);
+
+  self.postMessage({type:'done',rgba,rgbaAout,rgbaBout,atA,atB,dw,dh},
+    [rgba.buffer,rgbaAout.buffer,rgbaBout.buffer,atA.buffer,atB.buffer]);
+};
+`;
+
+
+// ═══════════════════════════════════════════════════════════════
+// MAIN THREAD
+// ═══════════════════════════════════════════════════════════════
+const WORKER_URL = 'https://pixelcomposer-api.pixelcomposerapp.workers.dev';
+
+// ── Analytics ─────────────────────────────────────────────────
+let _uid = localStorage.getItem('pc_uid');
+if (!_uid) { _uid = crypto.randomUUID(); localStorage.setItem('pc_uid', _uid); }
+const _ref = new URLSearchParams(location.search).get('ref') || document.referrer.slice(0, 128) || '';
+function track(event, extra) {
+  fetch(WORKER_URL + '/track', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ uid: _uid, event, ref: _ref, ...extra })
+  }).catch(() => {});
+}
+track('page_open');
+
+// ── Image type classifier (deterministic, no AI) ──────────────
+// Rough heuristic from pixel statistics to log what users upload
+// Helps plan improvements without seeing actual images
+function classifyImageType(imgData) {
+  const d = imgData.data;
+  const n = imgData.width * imgData.height;
+  const step = Math.max(1, Math.floor(n / 1024));
+
+  let rSum = 0, gSum = 0, bSum = 0;
+  let skinCount = 0, grayCount = 0, satHighCount = 0;
+  let edgeCount = 0;
+  const w = imgData.width;
+
+  for (let i = 0; i < n; i += step) {
+    const p = i * 4;
+    const r = d[p] / 255, g = d[p + 1] / 255, b = d[p + 2] / 255;
+    rSum += r; gSum += g; bSum += b;
+
+    // Skin tone detection (warm, low saturation, mid-luminance)
+    const mx = Math.max(r, g, b), mn = Math.min(r, g, b);
+    const sat = mx > 0 ? (mx - mn) / mx : 0;
+    const lum = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+    if (r > 0.35 && r > g && r > b && sat > 0.1 && sat < 0.6 && lum > 0.2 && lum < 0.85) skinCount++;
+    if (sat < 0.08) grayCount++;
+    if (sat > 0.5) satHighCount++;
+  }
+
+  const samples = Math.ceil(n / step);
+  const skinRatio = skinCount / samples;
+  const grayRatio = grayCount / samples;
+  const satRatio = satHighCount / samples;
+  const rMean = rSum / samples, gMean = gSum / samples, bMean = bSum / samples;
+
+  // Classification rules
+  if (skinRatio > 0.18) return 'portrait';
+  if (grayRatio > 0.6)  return 'bw_photo';
+  if (satRatio > 0.55)  return 'abstract_vivid';
+  if (satRatio < 0.15)  return 'landscape_muted';
+  const warm = rMean > bMean * 1.2;
+  const cool = bMean > rMean * 1.1;
+  if (warm) return 'photo_warm';
+  if (cool) return 'photo_cool';
+  return 'general';
+}
+
+// ── State ──────────────────────────────────────────────────────
+const S = {
+  imgA: null, imgB: null,
+  resA: null, resB: null,
+  outData: null, attrA: null, attrB: null,
+  w: 0, h: 0, lowSrc: 'A',
+  busy: false, timer: null, worker: null,
+  history: [],           // [{thumbA, thumbB, thumbOut, mode, time, outData}]
+  activeHistoryIdx: -1,
+};
+
+function setStatus(m) { document.getElementById('statusMsg').textContent = m; }
+function setRight(m)  { document.getElementById('statusRight').textContent = m; }
+function setProgress(pct, text) {
+  document.getElementById('progressBar').style.width = pct + '%';
+  if (text) document.getElementById('loadingText').textContent = text;
+}
+
+// ── Image loading ──────────────────────────────────────────────
+function loadFromFile(file, slot) {
+  const reader = new FileReader();
+  reader.onload = e => {
+    const img = new Image();
+    img.onload = () => {
+      // Full-res offscreen — no cap
+      const off = document.createElement('canvas');
+      off.width = img.naturalWidth; off.height = img.naturalHeight;
+      off.getContext('2d').drawImage(img, 0, 0);
+      const data = off.getContext('2d').getImageData(0, 0, off.width, off.height);
+      if (slot === 'A') S.imgA = data;
+      else              S.imgB = data;
+
+      // Classify and track image type
+      const imgType = classifyImageType(data);
+      track('image_upload', { slot, img_type: imgType });
+
+      // Thumbnail in bottom bar
+      const thumb = document.getElementById('thumb' + slot);
+      const dz = document.getElementById('drop' + slot);
+      thumb.width = dz.clientWidth; thumb.height = dz.clientHeight;
+      thumb.getContext('2d').drawImage(img, 0, 0, thumb.width, thumb.height);
+      thumb.style.display = 'block';
+      document.getElementById('hint' + slot).style.display = 'none';
+      document.getElementById('drop' + slot).classList.add('loaded');
+      const info = document.getElementById('info' + slot);
+      info.textContent = `${img.naturalWidth}×${img.naturalHeight}`;
+      info.style.display = 'block';
+
+      // Pipeline preview
+      updatePipePreview(slot, img);
+
+      setStatus(`image ${slot} loaded — ${img.naturalWidth}×${img.naturalHeight}`);
+      checkResWarn();
+      updateComposeBtn();
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function updatePipePreview(slot, img) {
+  const canvasId = slot === 'A' ? 'canvasA' : 'canvasB';
+  const pipeId   = slot === 'A' ? 'pipeA'   : 'pipeB';
+  const canvas   = document.getElementById(canvasId);
+  const pipe     = document.getElementById(pipeId);
+  canvas.width   = pipe.clientWidth || 120;
+  canvas.height  = pipe.clientHeight || 120;
+  canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+  canvas.style.display = 'block';
+  pipe.querySelector('.empty').style.display = 'none';
+}
+
+function updateComposeBtn() {
+  document.getElementById('composeBtn').disabled = !(S.imgA && S.imgB);
+}
+
+document.getElementById('fileA').addEventListener('change', e => { if (e.target.files[0]) loadFromFile(e.target.files[0], 'A'); });
+document.getElementById('fileB').addEventListener('change', e => { if (e.target.files[0]) loadFromFile(e.target.files[0], 'B'); });
+
+// ── Drag and drop ──────────────────────────────────────────────
+function onDrag(e, slot) { e.preventDefault(); document.getElementById('drop' + slot).classList.add('drag-over'); }
+function offDrag(slot)   { document.getElementById('drop' + slot).classList.remove('drag-over'); }
+function onDrop(e, slot) {
+  e.preventDefault(); offDrag(slot);
+  const f = e.dataTransfer.files[0];
+  if (f && f.type.startsWith('image/')) loadFromFile(f, slot);
+}
+
+// ── Swap ───────────────────────────────────────────────────────
+function swapImages() {
+  [S.imgA, S.imgB] = [S.imgB, S.imgA];
+  const thumbA = document.getElementById('thumbA');
+  const thumbB = document.getElementById('thumbB');
+  const tmpCanvas = document.createElement('canvas');
+  tmpCanvas.width = thumbA.width; tmpCanvas.height = thumbA.height;
+  tmpCanvas.getContext('2d').drawImage(thumbA, 0, 0);
+  thumbA.getContext('2d').clearRect(0, 0, thumbA.width, thumbA.height);
+  thumbA.getContext('2d').drawImage(thumbB, 0, 0, thumbA.width, thumbA.height);
+  thumbB.getContext('2d').clearRect(0, 0, thumbB.width, thumbB.height);
+  thumbB.getContext('2d').drawImage(tmpCanvas, 0, 0, thumbB.width, thumbB.height);
+  const aLoaded = S.imgA != null, bLoaded = S.imgB != null;
+  thumbA.style.display = aLoaded ? 'block' : 'none';
+  thumbB.style.display = bLoaded ? 'block' : 'none';
+  document.getElementById('hintA').style.display = aLoaded ? 'none' : 'flex';
+  document.getElementById('hintB').style.display = bLoaded ? 'none' : 'flex';
+  ['A','B'].forEach(s => {
+    const other = s === 'A' ? 'B' : 'A';
+    document.getElementById('drop' + s).classList.toggle('loaded', s === 'A' ? !!S.imgA : !!S.imgB);
+  });
+  const tmpInfo = document.getElementById('infoA').textContent;
+  document.getElementById('infoA').textContent = document.getElementById('infoB').textContent;
+  document.getElementById('infoB').textContent = tmpInfo;
+  updateComposeBtn();
+  if (S.imgA && S.imgB) scheduleCompose();
+}
+
+// ── Resolution ────────────────────────────────────────────────
+function getTargetRes() {
+  const mode = document.getElementById('resolutionSelect').value;
+  const map = { hd:{width:1280,height:720}, fhd:{width:1920,height:1080}, qhd:{width:2560,height:1440}, '4k':{width:3840,height:2160}, square:{width:1080,height:1080} };
+  if (map[mode]) return map[mode];
+  if (mode === 'original') {
+    const w = Math.max(S.imgA ? S.imgA.width : 0, S.imgB ? S.imgB.width : 0) || 1920;
+    const h = Math.max(S.imgA ? S.imgA.height : 0, S.imgB ? S.imgB.height : 0) || 1080;
+    return { width: w, height: h };
+  }
+  return {
+    width:  Math.max(64, parseInt(document.getElementById('customWidth').value)  || 1920),
+    height: Math.max(64, parseInt(document.getElementById('customHeight').value) || 1080),
+  };
+}
+function checkResWarn() {
+  if (!S.imgA || !S.imgB) return;
+  const { width:dw, height:dh } = getTargetRes();
+  const srcW = Math.max(S.imgA.width, S.imgB.width);
+  const srcH = Math.max(S.imgA.height, S.imgB.height);
+  document.getElementById('resWarn').style.display = (dw > srcW || dh > srcH) ? 'block' : 'none';
+}
+function normalise(imgData, tw, th) {
+  if (imgData.width === tw && imgData.height === th) return new Uint8ClampedArray(imgData.data);
+  const src = document.createElement('canvas'); src.width = imgData.width; src.height = imgData.height;
+  src.getContext('2d').putImageData(imgData, 0, 0);
+  const dst = document.createElement('canvas'); dst.width = tw; dst.height = th;
+  const dctx = dst.getContext('2d'); dctx.imageSmoothingEnabled = true; dctx.imageSmoothingQuality = 'high';
+  dctx.drawImage(src, 0, 0, tw, th);
+  return new Uint8ClampedArray(dctx.getImageData(0, 0, tw, th).data);
+}
+
+// ── Compose ───────────────────────────────────────────────────
+function scheduleCompose() {
+  if (!S.imgA || !S.imgB) return;
+  clearTimeout(S.timer);
+  S.timer = setTimeout(compose, 120);
+}
+
+function compose() {
+  if (!S.imgA || !S.imgB || S.busy) return;
+  S.busy = true;
+  if (S.worker) { S.worker.terminate(); S.worker = null; }
+
+  const overlay = document.getElementById('loadingOverlay');
+  overlay.classList.add('active');
+  setProgress(0, 'preparing…');
+  track('compose');
+
+  const { width:dw, height:dh } = getTargetRes();
+  const mode   = document.getElementById('modeSelect').value;
+  const sigma  = parseFloat(document.getElementById('sigmaSlider').value);
+  const alpha  = parseFloat(document.getElementById('alphaSlider').value) / 100;
+  const unsharpAmount = parseFloat(document.getElementById('unsharpSlider').value) / 100;
+
+  const srcW = Math.max(S.imgA.width, S.imgB.width);
+  const srcH = Math.max(S.imgA.height, S.imgB.height);
+  const normA = normalise(S.imgA, srcW, srcH);
+  const normB = normalise(S.imgB, srcW, srcH);
+
+  const blob = new Blob([WORKER_SRC], { type: 'application/javascript' });
+  const url  = URL.createObjectURL(blob);
+  S.worker   = new Worker(url);
+
+  S.worker.onmessage = e => {
+    const msg = e.data;
+    if (msg.type === 'progress') { setProgress(msg.pct, msg.text); return; }
+    if (msg.type === 'done') {
+      URL.revokeObjectURL(url);
+      const { rgba, rgbaAout, rgbaBout, atA, atB, dw:ow, dh:oh } = msg;
+      S.w = ow; S.h = oh;
+      S.outData = new ImageData(rgba, ow, oh);
+      S.resA    = new ImageData(rgbaAout, ow, oh);
+      S.resB    = new ImageData(rgbaBout, ow, oh);
+      S.attrA = atA; S.attrB = atB;
+
+      // Render to main output canvas
+      const c = document.getElementById('canvasOut');
+      c.width = ow; c.height = oh;
+      c.getContext('2d').putImageData(S.outData, 0, 0);
+      c.style.display = 'block';
+      document.getElementById('outPlaceholder').style.display = 'none';
+
+      // Render to pipeline output thumb
+      renderPipeOut();
+
+      document.getElementById('outInfo').textContent = `${ow}×${oh} · ${mode}`;
+      document.getElementById('inspMode').textContent = `${mode} · linear RGB · pyramid`;
+
+      // ── Result ready moment ──
+      // Download button becomes the dominant next action
+      const dlBtn = document.getElementById('downloadBtn');
+      dlBtn.disabled = false;
+      dlBtn.textContent = `DOWNLOAD  ${ow}×${oh}`;
+      dlBtn.style.animation = 'pulse 0.6s ease';
+      setTimeout(() => dlBtn.style.animation = '', 700);
+
+      setProgress(100, 'done');
+      overlay.classList.remove('active');
+      S.busy = false; S.worker = null;
+      setStatus(`composition ready · ${mode} · ${ow}×${oh}px`);
+      setRight(`A:${S.imgA.width}×${S.imgA.height} + B:${S.imgB.width}×${S.imgB.height} → ${ow}×${oh}`);
+
+      // Add to history + background memory
+      addToHistory(mode);
+    }
+  };
+
+  S.worker.onerror = err => {
+    setStatus(`error: ${err.message}`);
+    overlay.classList.remove('active');
+    S.busy = false;
+    URL.revokeObjectURL(url);
+  };
+
+  S.worker.postMessage({
+    rgbaA: normA, rgbaB: normB,
+    sw: srcW, sh: srcH, dw, dh,
+    mode, params: { alpha, sigma, lowSrc: S.lowSrc },
+    unsharpAmount,
+  }, [normA.buffer, normB.buffer]);
+}
+
+function renderPipeOut() {
+  if (!S.outData) return;
+  const canvas = document.getElementById('canvasPipeOut');
+  const pipe   = document.getElementById('pipeOut');
+  canvas.width  = pipe.clientWidth  || 120;
+  canvas.height = pipe.clientHeight || 120;
+  const tmp = document.createElement('canvas');
+  tmp.width = S.w; tmp.height = S.h;
+  tmp.getContext('2d').putImageData(S.outData, 0, 0);
+  canvas.getContext('2d').drawImage(tmp, 0, 0, canvas.width, canvas.height);
+  canvas.style.display = 'block';
+  pipe.querySelector('.empty').style.display = 'none';
+}
+
+// ── History system ────────────────────────────────────────────
+function addToHistory(mode) {
+  // Create thumbnails for history entry
+  const thumbSize = 64;
+  function makeThumb(imgData) {
+    const c = document.createElement('canvas'); c.width = thumbSize; c.height = thumbSize;
+    const src = document.createElement('canvas'); src.width = imgData.width; src.height = imgData.height;
+    src.getContext('2d').putImageData(imgData, 0, 0);
+    c.getContext('2d').drawImage(src, 0, 0, thumbSize, thumbSize);
+    return c.toDataURL('image/jpeg', 0.7);
+  }
+  function makeOutThumb() {
+    const c = document.createElement('canvas'); c.width = thumbSize; c.height = thumbSize;
+    const src = document.createElement('canvas'); src.width = S.w; src.height = S.h;
+    src.getContext('2d').putImageData(S.outData, 0, 0);
+    c.getContext('2d').drawImage(src, 0, 0, thumbSize, thumbSize);
+    return c.toDataURL('image/jpeg', 0.7);
+  }
+
+  const entry = {
+    thumbA:   makeThumb(S.imgA),
+    thumbB:   makeThumb(S.imgB),
+    thumbOut: makeOutThumb(),
+    outDataUrl: makeOutThumb(), // for bg memory
+    mode,
+    time: new Date().toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' }),
+    outData: S.outData,
+    w: S.w, h: S.h,
+  };
+
+  S.history.unshift(entry);
+  if (S.history.length > 20) S.history.pop();
+
+  renderHistory();
+  addToBackground(entry);
+}
+
+function renderHistory() {
+  const list = document.getElementById('historyList');
+  const empty = document.getElementById('historyEmpty');
+  if (!S.history.length) { empty.style.display = 'block'; return; }
+  empty.style.display = 'none';
+  list.innerHTML = '';
+
+  S.history.forEach((entry, idx) => {
+    const item = document.createElement('div');
+    item.className = 'history-item' + (idx === S.activeHistoryIdx ? ' active-item' : '');
+    item.onclick = () => loadFromHistory(idx);
+    item.innerHTML = `
+      <div class="history-flow">
+        <img class="h-thumb" src="${entry.thumbA}" alt="A">
+        <div class="h-arrow">→</div>
+        <img class="h-thumb" src="${entry.thumbB}" alt="B">
+        <div class="h-arrow">→</div>
+        <img class="h-thumb" src="${entry.thumbOut}" alt="out">
+      </div>
+      <div class="history-meta">
+        <span class="history-mode">${entry.mode}</span>
+        <span class="history-time">${entry.time}</span>
+      </div>`;
+    list.appendChild(item);
+  });
+}
+
+function loadFromHistory(idx) {
+  const entry = S.history[idx];
+  if (!entry || !entry.outData) return;
+  S.activeHistoryIdx = idx;
+  S.outData = entry.outData;
+  S.w = entry.w; S.h = entry.h;
+
+  const c = document.getElementById('canvasOut');
+  c.width = entry.w; c.height = entry.h;
+  c.getContext('2d').putImageData(entry.outData, 0, 0);
+  c.style.display = 'block';
+  document.getElementById('outPlaceholder').style.display = 'none';
+  document.getElementById('outInfo').textContent = `${entry.w}×${entry.h} · ${entry.mode} (history)`;
+
+  const dlBtn = document.getElementById('downloadBtn');
+  dlBtn.disabled = false;
+  dlBtn.textContent = `DOWNLOAD  ${entry.w}×${entry.h}`;
+
+  renderHistory();
+  setStatus(`loaded from history · ${entry.mode} · ${entry.time}`);
+}
+
+function clearHistory() {
+  S.history = [];
+  S.activeHistoryIdx = -1;
+  renderHistory();
+  document.getElementById('bgMemory').innerHTML = '';
+}
+
+// ── Background visual memory ──────────────────────────────────
+// Triplet (A, B, output) shown as blurred low-opacity background
+// Max 6 triplets — older ones fade out
+const MAX_BG_ITEMS = 6;
+const bgItems = [];
+
+function addToBackground(entry) {
+  const bg = document.getElementById('bgMemory');
+  const bgW = bg.clientWidth || 800;
+  const bgH = bg.clientHeight || 500;
+
+  // Create triplet container
+  const triplet = document.createElement('div');
+  triplet.style.cssText = `position:absolute;display:flex;gap:4px;opacity:0;transition:opacity 1.5s;`;
+
+  // Random position keeping triplet fully inside bounds
+  const tripletW = Math.min(300, bgW * 0.45);
+  const itemW = (tripletW - 8) / 3;
+  const itemH = itemW * 0.65;
+  const left = Math.random() * (bgW - tripletW - 10);
+  const top  = Math.random() * (bgH - itemH - 10);
+  triplet.style.left = left + 'px';
+  triplet.style.top  = top  + 'px';
+
+  [entry.thumbA, entry.thumbB, entry.thumbOut].forEach((src, i) => {
+    const img = document.createElement('img');
+    img.src = src;
+    img.style.cssText = `width:${itemW}px;height:${itemH}px;object-fit:cover;border-radius:4px;filter:blur(18px) saturate(0.7);`;
+    triplet.appendChild(img);
+  });
+
+  bg.appendChild(triplet);
+  bgItems.push(triplet);
+  setTimeout(() => triplet.style.opacity = '0.07', 50);
+
+  // Remove oldest if over limit
+  if (bgItems.length > MAX_BG_ITEMS) {
+    const old = bgItems.shift();
+    old.style.opacity = '0';
+    setTimeout(() => old.remove(), 1600);
+  }
+}
+
+// ── Pixel inspector ───────────────────────────────────────────
+document.getElementById('canvasOut').addEventListener('mousemove', inspectPx);
+document.getElementById('canvasOut').addEventListener('click', inspectPx);
+
+function inspectPx(e) {
+  if (!S.outData || !S.resA || !S.resB) return;
+  const c = document.getElementById('canvasOut');
+  const rect = c.getBoundingClientRect();
+  const x = Math.floor((e.clientX - rect.left) * c.width  / rect.width);
+  const y = Math.floor((e.clientY - rect.top)  * c.height / rect.height);
+  if (x < 0 || y < 0 || x >= S.w || y >= S.h) return;
+  document.getElementById('inspCoord').textContent = `x:${x}  y:${y}`;
+  const idx = (y * S.w + x) * 4;
+  const showPx = (data, swId, valId) => {
+    const r = data[idx], g = data[idx+1], b = data[idx+2];
+    const hex = `#${r.toString(16).padStart(2,'0')}${g.toString(16).padStart(2,'0')}${b.toString(16).padStart(2,'0')}`;
+    document.getElementById(swId).style.background = hex;
+    document.getElementById(valId).textContent = `rgb(${r},${g},${b})`;
+  };
+  showPx(S.resA.data,    'swatchA',   'valA');
+  showPx(S.resB.data,    'swatchB',   'valB');
+  showPx(S.outData.data, 'swatchOut', 'valOut');
+  const pi = y * S.w + x;
+  if (S.attrA && S.attrB) {
+    document.getElementById('contribA').textContent = (S.attrA[pi]*100).toFixed(1)+'%';
+    document.getElementById('contribB').textContent = (S.attrB[pi]*100).toFixed(1)+'%';
+  }
+}
+
+// ── Controls ──────────────────────────────────────────────────
+function setLowSrc(src) {
+  S.lowSrc = src;
+  document.getElementById('btnLowA').classList.toggle('active', src === 'A');
+  document.getElementById('btnLowB').classList.toggle('active', src === 'B');
+  scheduleCompose();
+}
+
+document.getElementById('modeSelect').addEventListener('change', () => {
+  const m = document.getElementById('modeSelect').value;
+  document.getElementById('freqControls').style.display  = m === 'frequency' ? 'block' : 'none';
+  document.getElementById('alphaControls').style.display = m === 'normal'    ? 'block' : 'none';
+  scheduleCompose();
+});
+
+[['sigmaSlider','sigmaDisplay',''], ['alphaSlider','alphaDisplay','%'], ['unsharpSlider','unsharpDisplay','%']].forEach(([id,disp,suf]) => {
+  document.getElementById(id).addEventListener('input', function() {
+    document.getElementById(disp).textContent = this.value + suf;
+    scheduleCompose();
+  });
+});
+
+document.getElementById('resolutionSelect').addEventListener('change', function() {
+  document.getElementById('customBox').style.display = this.value === 'custom' ? 'flex' : 'none';
+  checkResWarn(); scheduleCompose();
+});
+['customWidth','customHeight'].forEach(id => {
+  document.getElementById(id).addEventListener('input', () => { checkResWarn(); scheduleCompose(); });
+});
+
+// ── Download ──────────────────────────────────────────────────
+function downloadOutput() {
+  if (!S.outData) return;
+  const c = document.createElement('canvas'); c.width = S.w; c.height = S.h;
+  c.getContext('2d').putImageData(S.outData, 0, 0);
+  const mode = document.getElementById('modeSelect').value;
+  const a = document.createElement('a');
+  a.href = c.toDataURL('image/png');
+  a.download = `pixelcomposer_${S.w}x${S.h}_${mode}.png`;
+  a.click();
+  track('export');
+  setStatus(`downloaded · ${S.w}×${S.h} · ${mode}`);
+}
+
+// ── Feedback modal ────────────────────────────────────────────
+let fbRating = 0;
+function openFeedback() {
+  fbRating = 0;
+  document.getElementById('fbText').value = '';
+  document.getElementById('fbThanks').style.display = 'none';
+  document.getElementById('fbForm').style.display = 'flex';
+  document.querySelectorAll('.fb-star').forEach(s => s.classList.remove('active'));
+  document.getElementById('fbOverlay').classList.add('active');
+}
+function closeFeedback() { document.getElementById('fbOverlay').classList.remove('active'); }
+function setRating(n) {
+  fbRating = n;
+  document.querySelectorAll('.fb-star').forEach((s, i) => s.classList.toggle('active', i < n));
+}
+function submitFeedback() {
+  const text = document.getElementById('fbText').value.trim();
+  if (!text && !fbRating) return;
+  document.getElementById('fbSubmit').disabled = true;
+  fetch(WORKER_URL + '/feedback', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ rating: fbRating, message: text || '', uid: _uid })
+  }).then(r => r.json()).catch(() => ({ ok: false }));
+  document.getElementById('fbForm').style.display = 'none';
+  document.getElementById('fbThanks').style.display = 'block';
+  document.getElementById('fbSubmit').disabled = false;
+  setTimeout(closeFeedback, 1800);
+}
+
+// ── Download button pulse animation ──────────────────────────
+const style = document.createElement('style');
+style.textContent = `
+@keyframes pulse {
+  0%   { transform: scale(1); box-shadow: 0 0 0 0 rgba(255,85,51,0.5); }
+  50%  { transform: scale(1.03); box-shadow: 0 0 0 8px rgba(255,85,51,0); }
+  100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255,85,51,0); }
+}`;
+document.head.appendChild(style);
+
+// ── Init ──────────────────────────────────────────────────────
+document.getElementById('freqControls').style.display = 'none';
+document.getElementById('alphaControls').style.display = 'none';
+updateComposeBtn();
+setStatus('upload two images below to begin');
+
+</script>
 </body>
 </html>
