@@ -586,15 +586,23 @@ input[type=range]{width:100%;accent-color:var(--accent2);cursor:pointer;}
     <div>
       <div class="sec-label">OUTPUT RESOLUTION</div>
       <select id="resolutionSelect">
+        <optgroup label="── DESKTOP ──">
+          <option value="hd">HD — 1280 × 720</option>
+          <option value="fhd" selected>Full HD — 1920 × 1080</option>
+          <option value="qhd">Quad HD — 2560 × 1440</option>
+          <option value="4k">4K UHD — 3840 × 2160</option>
+          <option value="square">Square — 1080 × 1080</option>
+        </optgroup>
+        <optgroup label="── PHONE ──">
+          <option value="phone_fhd">FHD+ — 1080 × 2400</option>
+          <option value="phone_qhd">QHD — 1320 × 2868</option>
+          <option value="phone_qhd2">QHD+ — 1440 × 3120</option>
+          <option value="phone_4k">4K — 1440 × 3200</option>
+        </optgroup>
         <option value="original">original resolution</option>
-        <option value="hd">HD — 1280 × 720</option>
-        <option value="fhd" selected>Full HD — 1920 × 1080</option>
-        <option value="qhd">Quad HD — 2560 × 1440</option>
-        <option value="4k">4K UHD — 3840 × 2160</option>
-        <option value="square">Square — 1080 × 1080</option>
         <option value="custom">custom</option>
       </select>
-      <div class="res-warn" id="resWarn">⚠ upscaling — quality limited by source</div>
+      <div class="res-warn" id="resWarn">⚠ upscaling — choose different upscaling</div>
       <div class="custom-box" id="customBox">
         <div class="sec-label" style="margin-top:4px;">WIDTH</div>
         <input type="number" id="customWidth" value="1920" min="64" max="8192">
@@ -608,8 +616,8 @@ input[type=range]{width:100%;accent-color:var(--accent2);cursor:pointer;}
     <div>
       <div class="sec-label">EXPORT SHARPENING</div>
       <div class="slider-wrap">
-        <div class="slider-hdr"><span>unsharp amount</span><span id="unsharpDisplay">40%</span></div>
-        <input type="range" id="unsharpSlider" min="0" max="100" value="40">
+        <div class="slider-hdr"><span>unsharp amount</span><span id="unsharpDisplay">60%</span></div>
+        <input type="range" id="unsharpSlider" min="0" max="100" value="60">
       </div>
       <div class="hint">↑ slide to see different sharpness effects</div>
     </div>
@@ -635,6 +643,14 @@ input[type=range]{width:100%;accent-color:var(--accent2);cursor:pointer;}
     </div>
 
     <div class="sep"></div>
+    <div style="text-align:center;margin-bottom:4px;">
+      <!-- Logo placeholder — replace src with your logo URL -->
+      <img id="brandLogo" src="" alt=""
+        style="height:28px;opacity:0.7;display:none;"
+        onerror="this.style.display='none'">
+      <div id="brandText" style="font-size:10px;color:var(--muted);letter-spacing:2px;">PIXELCOMPOSER</div>
+    </div>
+
     <button class="download-btn" id="downloadBtn" disabled onclick="downloadOutput()">DOWNLOAD</button>
   </div>
 
@@ -946,6 +962,80 @@ function gaussBlur1ch(data,w,h,sigma){
 
 function lum(lin,i){return 0.2126*lin[i*3]+0.7152*lin[i*3+1]+0.0722*lin[i*3+2];}
 
+
+// ── BILATERAL FILTER — pre-fusion denoising ───────────────────
+// Removes JPEG artifacts and noise BEFORE pyramid decomposition.
+// Unlike Gaussian blur, bilateral preserves edges while smoothing
+// flat regions. This prevents artifacts from being amplified
+// through the pyramid levels.
+// sigma_s = spatial radius, sigma_r = range (color) sigma
+function bilateralFilter(data, w, h, sigmaS, sigmaR) {
+  const out = new Float32Array(data.length);
+  const r = Math.max(1, Math.ceil(2 * sigmaS)) | 0;
+  const ss2 = 2 * sigmaS * sigmaS;
+  const sr2 = 2 * sigmaR * sigmaR;
+  for (let y = 0; y < h; y++) {
+    for (let x = 0; x < w; x++) {
+      const p = (y * w + x) * 3;
+      const rc = data[p], gc = data[p+1], bc = data[p+2];
+      let sumR=0,sumG=0,sumB=0,sumW=0;
+      for (let dy = -r; dy <= r; dy++) {
+        for (let dx = -r; dx <= r; dx++) {
+          const ny = Math.max(0, Math.min(h-1, y+dy));
+          const nx = Math.max(0, Math.min(w-1, x+dx));
+          const q = (ny * w + nx) * 3;
+          const rq=data[q],gq=data[q+1],bq=data[q+2];
+          // Spatial weight
+          const spatialW = Math.exp(-(dx*dx+dy*dy)/ss2);
+          // Range weight — color similarity
+          const dr=rc-rq,dg=gc-gq,db=bc-bq;
+          const rangeW = Math.exp(-(dr*dr+dg*dg+db*db)/sr2);
+          const w2 = spatialW * rangeW;
+          sumR+=rq*w2;sumG+=gq*w2;sumB+=bq*w2;sumW+=w2;
+        }
+      }
+      out[p]  = sumR/sumW;
+      out[p+1]= sumG/sumW;
+      out[p+2]= sumB/sumW;
+    }
+  }
+  return out;
+}
+
+// ── CROSS-SCALE COHERENCE ─────────────────────────────────────
+// Real detail persists across pyramid levels.
+// Noise appears only in the finest level and disappears quickly.
+// This map identifies which pixels have "real" high-frequency
+// content vs compression/interpolation artifacts.
+// Returns Float32Array [0-1] per pixel — 1 = coherent real detail
+function crossScaleCoherence(pyr, w, h) {
+  const n = w * h;
+  const coherence = new Float32Array(n);
+  // Compare fine level magnitude against coarser levels
+  // Real edges: strong at level 0, still present at level 1-2
+  // Noise: strong at level 0, near-zero at level 1
+  const l0 = pyr[0].lap; // finest
+  const l1 = pyr[1].lap; // one level coarser
+  const l2 = pyr[2].lap; // two levels coarser
+  // Upsample l1 and l2 to full res for comparison
+  const l1up = upsample(l1, pyr[1].w, pyr[1].h, w, h);
+  const l2up = upsample(l2, pyr[2].w, pyr[2].h, w, h);
+  for (let i = 0; i < n; i++) {
+    const p = i * 3;
+    // Magnitude at each level (use luminance channel for speed)
+    const m0 = Math.abs(0.2126*l0[p]+0.7152*l0[p+1]+0.0722*l0[p+2]);
+    const m1 = Math.abs(0.2126*l1up[p]+0.7152*l1up[p+1]+0.0722*l1up[p+2]);
+    const m2 = Math.abs(0.2126*l2up[p]+0.7152*l2up[p+1]+0.0722*l2up[p+2]);
+    // Persistence ratio: if detail survives into coarser levels it's real
+    // Weighted: level 1 persistence counts more than level 2
+    const persist = (m1 * 0.6 + m2 * 0.4) / (m0 + 1e-8);
+    // Clamp to [0,1] — high persistence = real detail
+    coherence[i] = Math.min(1, persist * 3.0);
+  }
+  // Smooth slightly to avoid pixel-level noise in the coherence map
+  return gaussBlur1ch(coherence, w, h, 0.6);
+}
+
 // ── SCENE ANALYSIS ────────────────────────────────────────────
 // Returns continuous soft fields — no hard classes.
 // NEW: gradX, gradY (oriented gradients), saliency, protect map
@@ -1142,7 +1232,7 @@ function collapsePyramid(pyr){
 
 // ── PYRAMID FUSION ────────────────────────────────────────────
 // Gaussian-weighted level resampling prevents seams between layers
-function fusePyramids(pyrA,pyrB,wA,wB,w,h,mode,params){
+function fusePyramids(pyrA,pyrB,wA,wB,w,h,mode,params,cohA,cohB){
   const fusedPyr=[];
   for(let lv=0;lv<PYRAMID_LEVELS;lv++){
     const levA=pyrA[lv],levB=pyrB[lv],lw=levA.w,lh=levA.h,ln=lw*lh;
@@ -1165,8 +1255,23 @@ function fusePyramids(pyrA,pyrB,wA,wB,w,h,mode,params){
     }
     const dA=levA.lap,dB=levB.lap,fused=new Float32Array(lw*lh*3);
     if(lv<PYRAMID_LEVELS-1){
-      // Fine/mid levels: weighted blend of Laplacian bands
-      for(let i=0;i<ln;i++){const p=i*3,wa=levelWA[i],wb=levelWB[i];fused[p]=dA[p]*wa+dB[p]*wb;fused[p+1]=dA[p+1]*wa+dB[p+1]*wb;fused[p+2]=dA[p+2]*wa+dB[p+2]*wb;}
+      // Fine/mid levels: weighted blend modulated by cross-scale coherence
+      // Where coherence is low (noise/artifacts), reduce contribution
+      // This prevents artifact amplification through the pyramid
+      for(let i=0;i<ln;i++){
+        const p=i*3,wa=levelWA[i],wb=levelWB[i];
+        // Coherence at this level — downsample from full res
+        // For levels > 0, coherence is already smoothed so simple lookup works
+        const cA = cohA ? Math.min(1, (cohA[Math.min(cohA.length-1, i)] || 0) + 0.3) : 1;
+        const cB = cohB ? Math.min(1, (cohB[Math.min(cohB.length-1, i)] || 0) + 0.3) : 1;
+        // Suppress incoherent (noisy) frequencies, preserve coherent ones
+        fused[p]  =dA[p]*wa*cA+dB[p]*wb*cB;
+        fused[p+1]=dA[p+1]*wa*cA+dB[p+1]*wb*cB;
+        fused[p+2]=dA[p+2]*wa*cA+dB[p+2]*wb*cB;
+        // Renormalise by actual weight used
+        const wt=(wa*cA+wb*cB)+1e-8;
+        fused[p]/=wt;fused[p+1]/=wt;fused[p+2]/=wt;
+      }
     }else{
       // Base level: mode-specific color interaction
       const alpha=params.alpha||0.5;
@@ -1317,12 +1422,24 @@ self.onmessage=function(e){
   let fused,atA,atB;
 
   if(usePyramid){
-    self.postMessage({type:'progress',pct:52,text:'building pyramids\u2026'});
-    const pyrA=buildPyramid(linA,dw,dh);
-    const pyrB=buildPyramid(linB,dw,dh);
+    self.postMessage({type:'progress',pct:50,text:'bilateral pre-filter\u2026'});
+    // Bilateral filter removes JPEG/compression artifacts before pyramid
+    // decomposition. sigmaS=1.5 (spatial), sigmaR=0.06 (range in linear)
+    // Light touch — just enough to remove artifact amplification
+    const filtA = bilateralFilter(linA, dw, dh, 1.5, 0.06);
+    const filtB = bilateralFilter(linB, dw, dh, 1.5, 0.06);
 
-    self.postMessage({type:'progress',pct:65,text:'fusing pyramids\u2026'});
-    const fp=fusePyramids(pyrA,pyrB,wA,wB,dw,dh,mode,params);
+    self.postMessage({type:'progress',pct:56,text:'building pyramids\u2026'});
+    const pyrA=buildPyramid(filtA,dw,dh);
+    const pyrB=buildPyramid(filtB,dw,dh);
+
+    self.postMessage({type:'progress',pct:66,text:'cross-scale coherence\u2026'});
+    // Identify real detail vs noise using pyramid persistence
+    const cohA = crossScaleCoherence(pyrA, dw, dh);
+    const cohB = crossScaleCoherence(pyrB, dw, dh);
+
+    self.postMessage({type:'progress',pct:72,text:'fusing pyramids\u2026'});
+    const fp=fusePyramids(pyrA,pyrB,wA,wB,dw,dh,mode,params,cohA,cohB);
 
     self.postMessage({type:'progress',pct:74,text:'collapsing\u2026'});
     let collapsed=collapsePyramid(fp);
@@ -1731,7 +1848,17 @@ function updateComposeBtn() {
 // ── Resolution ────────────────────────────────────────────────
 function getTargetRes() {
   const mode=document.getElementById('resolutionSelect').value;
-  const map={hd:{width:1280,height:720},fhd:{width:1920,height:1080},qhd:{width:2560,height:1440},'4k':{width:3840,height:2160},square:{width:1080,height:1080}};
+  const map={
+    hd:{width:1280,height:720},
+    fhd:{width:1920,height:1080},
+    qhd:{width:2560,height:1440},
+    '4k':{width:3840,height:2160},
+    square:{width:1080,height:1080},
+    phone_fhd:{width:1080,height:2400},
+    phone_qhd:{width:1320,height:2868},
+    phone_qhd2:{width:1440,height:3120},
+    phone_4k:{width:1440,height:3200},
+  };
   if(map[mode])return map[mode];
   if(mode==='original'){
     const w=Math.max(S.imgA?S.imgA.width:0,S.imgB?S.imgB.width:0)||1920;
@@ -1750,13 +1877,35 @@ function checkResWarn() {
   document.getElementById('resWarn').style.display=(dw>srcW||dh>srcH)?'block':'none';
 }
 function normalise(imgData,tw,th) {
-  if(imgData.width===tw&&imgData.height===th)return new Uint8ClampedArray(imgData.data);
-  const src=document.createElement('canvas');src.width=imgData.width;src.height=imgData.height;
+  // Always draw to explicit offscreen canvas at exact target size
+  // Never use getImageData on a displayed canvas — CSS scaling corrupts it
+  const src=document.createElement('canvas');
+  src.width=imgData.width;src.height=imgData.height;
   src.getContext('2d').putImageData(imgData,0,0);
+
+  // Multi-stage upscaling in 1.5x steps — prevents ringing artifacts
+  let cur=src,cw=imgData.width,ch=imgData.height;
+  while(cw<tw*0.67||ch<th*0.67){
+    const nw=Math.min(tw,Math.round(cw*1.5));
+    const nh=Math.min(th,Math.round(ch*1.5));
+    const tmp=document.createElement('canvas');tmp.width=nw;tmp.height=nh;
+    const tctx=tmp.getContext('2d');
+    tctx.imageSmoothingEnabled=true;tctx.imageSmoothingQuality='high';
+    tctx.drawImage(cur,0,0,nw,nh);
+    cur=tmp;cw=nw;ch=nh;
+  }
+
+  // Final offscreen canvas at exact target — getImageData on never-displayed canvas
   const dst=document.createElement('canvas');dst.width=tw;dst.height=th;
-  const dctx=dst.getContext('2d');dctx.imageSmoothingEnabled=true;dctx.imageSmoothingQuality='high';
-  dctx.drawImage(src,0,0,tw,th);
-  return new Uint8ClampedArray(dctx.getImageData(0,0,tw,th).data);
+  const dctx=dst.getContext('2d');
+  dctx.imageSmoothingEnabled=true;dctx.imageSmoothingQuality='high';
+  dctx.drawImage(cur,0,0,tw,th);
+  const id=dctx.getImageData(0,0,tw,th);
+  // Verify dimensions — if browser returned wrong size, force correct
+  if(id.width!==tw||id.height!==th){
+    console.warn('normalise: getImageData returned wrong size',id.width,id.height,'expected',tw,th);
+  }
+  return new Uint8ClampedArray(id.data);
 }
 
 // ── Compose ───────────────────────────────────────────────────
@@ -1777,8 +1926,20 @@ function compose() {
   const sigma=parseFloat(document.getElementById('sigmaSlider').value);
   const alpha=parseFloat(document.getElementById('alphaSlider').value)/100;
   const unsharpAmount=parseFloat(document.getElementById('unsharpSlider').value)/100;
-  const srcW=Math.max(S.imgA.width,S.imgB.width),srcH=Math.max(S.imgA.height,S.imgB.height);
-  const normA=normalise(S.imgA,srcW,srcH),normB=normalise(S.imgB,srcW,srcH);
+
+  // Processing resolution cap — engine safe limit ~460MB at 1920×1080 equivalent
+  // Use pixel count cap rather than dimension cap so portrait resolutions work correctly
+  const MAX_PIXELS = 1920 * 1080;
+  const reqPixels = dw * dh;
+  const scale = reqPixels > MAX_PIXELS ? Math.sqrt(MAX_PIXELS / reqPixels) : 1;
+  const procW = Math.round(dw * scale);
+  const procH = Math.round(dh * scale);
+
+  // Pre-scale inputs to processing resolution on main thread
+  const normA=normalise(S.imgA,procW,procH),normB=normalise(S.imgB,procW,procH);
+  // Capture target resolution before worker starts — needed in done handler
+  const targetW=dw, targetH=dh;
+
   const blob=new Blob([WORKER_SRC],{type:'application/javascript'});
   const url=URL.createObjectURL(blob);
   S.worker=new Worker(url);
@@ -1794,18 +1955,35 @@ function compose() {
       S.resB=new ImageData(rgbaBout,ow,oh);
       S.attrA=atA;S.attrB=atB;
       const c=document.getElementById('canvasOut');
-      c.width=ow;c.height=oh;
-      c.getContext('2d').putImageData(S.outData,0,0);
+      if(targetW > ow || targetH > oh){
+        // Upscale using OFFSCREEN canvas — never read back from displayed canvas
+        // (displayed canvas CSS scaling corrupts getImageData dimensions)
+        const offscreen=document.createElement('canvas');
+        offscreen.width=targetW;offscreen.height=targetH;
+        const octx=offscreen.getContext('2d');
+        octx.imageSmoothingEnabled=true;octx.imageSmoothingQuality='high';
+        const tmp=document.createElement('canvas');tmp.width=ow;tmp.height=oh;
+        tmp.getContext('2d').putImageData(S.outData,0,0);
+        octx.drawImage(tmp,0,0,targetW,targetH);
+        // Store in S.outData from offscreen — correct physical dimensions guaranteed
+        S.outData=octx.getImageData(0,0,targetW,targetH);
+        S.w=targetW;S.h=targetH;
+        // Copy to display canvas separately
+        c.width=targetW;c.height=targetH;
+        c.getContext('2d').putImageData(S.outData,0,0);
+      }else{
+        c.width=ow;c.height=oh;
+        c.getContext('2d').putImageData(S.outData,0,0);
+      }
       c.style.display='block';
       document.getElementById('outPlaceholder').style.display='none';
       document.getElementById('outputCard').classList.add('has-output');
       document.getElementById('arrowBOut').classList.add('lit');
-      document.getElementById('outInfo').textContent=`${ow}×${oh} · ${mode}`;
-      document.getElementById('inspMode').textContent=`${mode} · linear RGB · pyramid`;
-      // Download button — result ready moment
+      document.getElementById('outInfo').textContent=`${S.w}×${S.h} · ${mode}`;
+      document.getElementById('inspMode').textContent=`${mode} · processed@${ow}×${oh}`;
       const dlBtn=document.getElementById('downloadBtn');
       dlBtn.disabled=false;
-      dlBtn.textContent=`DOWNLOAD  ${ow}×${oh}`;
+      dlBtn.textContent=`DOWNLOAD  ${S.w}×${S.h}`;
       dlBtn.style.animation='pulse 0.8s ease';
       setTimeout(()=>dlBtn.style.animation='',900);
       setProgress(100,'done');
@@ -1822,7 +2000,7 @@ function compose() {
     document.getElementById('loadingOverlay').classList.remove('active');
     S.busy=false;URL.revokeObjectURL(url);
   };
-  S.worker.postMessage({rgbaA:normA,rgbaB:normB,sw:srcW,sh:srcH,dw,dh,mode,params:{alpha,sigma,lowSrc:S.lowSrc},unsharpAmount},[normA.buffer,normB.buffer]);
+  S.worker.postMessage({rgbaA:normA,rgbaB:normB,sw:procW,sh:procH,dw:procW,dh:procH,mode,params:{alpha,sigma,lowSrc:S.lowSrc},unsharpAmount},[normA.buffer,normB.buffer]);
 }
 
 // ── History ───────────────────────────────────────────────────
@@ -1900,11 +2078,13 @@ function loadFromHistory(idx) {
 
 function downloadHistoryItem(idx) {
   const entry=S.history[idx];if(!entry||!entry.outData)return;
-  const c=document.createElement('canvas');c.width=entry.w;c.height=entry.h;
-  c.getContext('2d').putImageData(entry.outData,0,0);
-  const a=document.createElement('a');a.href=c.toDataURL('image/png');
-  a.download=`pixelcomposer_${entry.w}x${entry.h}_${entry.mode}.png`;a.click();
-  track('export',{from:'history'});
+  const offscreen=document.createElement('canvas');
+  offscreen.width=entry.w;offscreen.height=entry.h;
+  offscreen.getContext('2d').putImageData(entry.outData,0,0);
+  const a=document.createElement('a');
+  a.href=offscreen.toDataURL('image/png');
+  a.download=`pixelcomposer_${entry.w}x${entry.h}_${entry.mode}.png`;
+  a.click();track('export',{from:'history'});
 }
 
 function clearHistory() {
@@ -1964,11 +2144,13 @@ document.getElementById('resolutionSelect').addEventListener('change',function()
 // ── Download ──────────────────────────────────────────────────
 function downloadOutput() {
   if(!S.outData)return;
-  const c=document.createElement('canvas');c.width=S.w;c.height=S.h;
-  c.getContext('2d').putImageData(S.outData,0,0);
+  const offscreen=document.createElement('canvas');
+  offscreen.width=S.w;offscreen.height=S.h;
+  offscreen.getContext('2d').putImageData(S.outData,0,0);
   const mode=document.getElementById('modeSelect').value;
+  const dataUrl=offscreen.toDataURL('image/png');
   const a=document.createElement('a');
-  a.href=c.toDataURL('image/png');
+  a.href=dataUrl;
   a.download=`pixelcomposer_${S.w}x${S.h}_${mode}.png`;
   a.click();track('export');
   setStatus(`downloaded · ${S.w}×${S.h} · ${mode}`);
