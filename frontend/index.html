@@ -442,6 +442,52 @@ input[type=range]{width:100%;accent-color:var(--accent2);cursor:pointer;}
 .fb-thanks{font-size:12px;color:#86efac;text-align:center;display:none;}
 
 /* ══ ANIMATIONS ══════════════════════════════════════════════ */
+
+/* ── Share button ─────────────────────────────────────────── */
+.share-btn{
+  background:rgba(124,58,237,0.15);border:1px solid rgba(124,58,237,0.4);
+  color:var(--text);padding:10px;border-radius:10px;cursor:pointer;
+  font-family:var(--font);font-size:12px;font-weight:700;
+  letter-spacing:1px;width:100%;transition:all 0.2s;margin-top:6px;
+  display:none;
+}
+.share-btn:hover{background:rgba(124,58,237,0.3);border-color:var(--accent2);}
+.share-btn.visible{display:block;}
+
+/* ── Onboarding modal ─────────────────────────────────────── */
+.onboard-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:2000;
+  display:flex;align-items:center;justify-content:center;
+  backdrop-filter:blur(6px);
+}
+.onboard-overlay.hidden{display:none;}
+.onboard-modal{
+  background:rgba(18,18,32,0.97);border:1px solid rgba(255,255,255,0.12);
+  border-radius:16px;padding:28px 32px;max-width:340px;width:90%;
+  display:flex;flex-direction:column;gap:14px;
+  box-shadow:0 32px 64px rgba(0,0,0,0.6);
+}
+.onboard-title{
+  font-size:13px;font-weight:700;color:var(--text);
+  display:flex;align-items:center;gap:8px;
+}
+.onboard-tips{display:flex;flex-direction:column;gap:10px;}
+.onboard-tip{
+  display:flex;align-items:flex-start;gap:10px;
+  font-size:11px;color:var(--muted);line-height:1.6;
+}
+.onboard-tip-icon{
+  font-size:14px;flex-shrink:0;margin-top:1px;
+}
+.onboard-dismiss{
+  background:linear-gradient(135deg,var(--accent2),#5b21b6);
+  border:none;color:white;padding:10px;border-radius:8px;
+  cursor:pointer;font-family:var(--font);font-size:12px;
+  font-weight:700;letter-spacing:1px;transition:all 0.2s;
+  margin-top:4px;
+}
+.onboard-dismiss:hover{opacity:0.9;}
+
 @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(255,85,51,0.5);}70%{box-shadow:0 0 0 12px rgba(255,85,51,0);}100%{box-shadow:0 0 0 0 rgba(255,85,51,0);}}
 @keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
 .fade-in{animation:fadeIn 0.4s ease forwards;}
@@ -650,6 +696,7 @@ input[type=range]{width:100%;accent-color:var(--accent2);cursor:pointer;}
     </div>
 
     <button class="download-btn" id="downloadBtn" disabled onclick="downloadOutput()">DOWNLOAD</button>
+    <button class="share-btn" id="shareBtn" onclick="shareOutput()">↗ SHARE</button>
   </div>
 
   <!-- CENTER STAGE -->
@@ -820,6 +867,20 @@ input[type=range]{width:100%;accent-color:var(--accent2);cursor:pointer;}
   </div>
   <div class="history-clear">
     <button onclick="clearHistory()">CLEAR HISTORY</button>
+  </div>
+</div>
+
+<!-- ONBOARDING MODAL -->
+<div class="onboard-overlay" id="onboardOverlay">
+  <div class="onboard-modal">
+    <div class="onboard-title">✦ Quick tips for best results</div>
+    <div class="onboard-tips">
+      <div class="onboard-tip"><span class="onboard-tip-icon">🖼</span><span>Upload two <strong>contrasting images</strong> — different colors, moods, or scenes work best</span></div>
+      <div class="onboard-tip"><span class="onboard-tip-icon">✨</span><span>Start with <strong>Soft Light</strong> blend mode — it gives the most natural results</span></div>
+      <div class="onboard-tip"><span class="onboard-tip-icon">⏱</span><span>Processing takes up to <strong>60 seconds</strong> — feel free to switch tabs</span></div>
+      <div class="onboard-tip"><span class="onboard-tip-icon">🔔</span><span>Enable notifications to know when it's ready</span></div>
+    </div>
+    <button class="onboard-dismiss" onclick="dismissOnboard()">Got it — let's create</button>
   </div>
 </div>
 
@@ -1497,7 +1558,7 @@ function track(event, extra) {
     body: JSON.stringify({uid:_uid, event, ref:_ref, ...extra})
   }).catch(()=>{});
 }
-track('page_open');
+// page_open tracked with device info below
 
 // ── Error tracking (fix 5) ────────────────────────────────────
 window.onerror = function(msg, src, line, col, err) {
@@ -1917,6 +1978,7 @@ function compose() {
   S.busy=true;
   if(S.worker){S.worker.terminate();S.worker=null;}
   document.getElementById('loadingOverlay').classList.add('active');
+  requestNotifPermission();
   setProgress(0,'preparing…');
   track('compose');
   const{width:dw,height:dh}=getTargetRes();
@@ -1991,6 +2053,10 @@ function compose() {
       setStatus(`composition ready · ${mode} · ${ow}×${oh}px`);
       setRight(`${S.imgA.width}×${S.imgA.height} + ${S.imgB.width}×${S.imgB.height} → ${ow}×${oh}`);
       addToHistory(mode);
+      // Show share button
+      document.getElementById('shareBtn').classList.add('visible');
+      // Browser notification
+      sendNotification();
     }
   };
   S.worker.onerror=err=>{
@@ -2029,6 +2095,7 @@ function addToHistory(mode) {
   });
   if(S.history.length>20)S.history.pop();
   renderHistory();
+  saveHistoryToStorage();
   document.getElementById('historyCount').textContent=S.history.length;
 }
 
@@ -2181,11 +2248,167 @@ function submitFeedback(){
 // ── Pulse animation ───────────────────────────────────────────
 const _st=document.createElement('style');
 _st.textContent=`
+
+/* ── Share button ─────────────────────────────────────────── */
+.share-btn{
+  background:rgba(124,58,237,0.15);border:1px solid rgba(124,58,237,0.4);
+  color:var(--text);padding:10px;border-radius:10px;cursor:pointer;
+  font-family:var(--font);font-size:12px;font-weight:700;
+  letter-spacing:1px;width:100%;transition:all 0.2s;margin-top:6px;
+  display:none;
+}
+.share-btn:hover{background:rgba(124,58,237,0.3);border-color:var(--accent2);}
+.share-btn.visible{display:block;}
+
+/* ── Onboarding modal ─────────────────────────────────────── */
+.onboard-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:2000;
+  display:flex;align-items:center;justify-content:center;
+  backdrop-filter:blur(6px);
+}
+.onboard-overlay.hidden{display:none;}
+.onboard-modal{
+  background:rgba(18,18,32,0.97);border:1px solid rgba(255,255,255,0.12);
+  border-radius:16px;padding:28px 32px;max-width:340px;width:90%;
+  display:flex;flex-direction:column;gap:14px;
+  box-shadow:0 32px 64px rgba(0,0,0,0.6);
+}
+.onboard-title{
+  font-size:13px;font-weight:700;color:var(--text);
+  display:flex;align-items:center;gap:8px;
+}
+.onboard-tips{display:flex;flex-direction:column;gap:10px;}
+.onboard-tip{
+  display:flex;align-items:flex-start;gap:10px;
+  font-size:11px;color:var(--muted);line-height:1.6;
+}
+.onboard-tip-icon{
+  font-size:14px;flex-shrink:0;margin-top:1px;
+}
+.onboard-dismiss{
+  background:linear-gradient(135deg,var(--accent2),#5b21b6);
+  border:none;color:white;padding:10px;border-radius:8px;
+  cursor:pointer;font-family:var(--font);font-size:12px;
+  font-weight:700;letter-spacing:1px;transition:all 0.2s;
+  margin-top:4px;
+}
+.onboard-dismiss:hover{opacity:0.9;}
+
 @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(255,85,51,0.5);}70%{box-shadow:0 0 0 14px rgba(255,85,51,0);}100%{box-shadow:0 0 0 0 rgba(255,85,51,0);}}
 @keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
 .fade-in{animation:fadeIn 0.35s ease forwards;}
 `;
 document.head.appendChild(_st);
+
+// ── Device tracking ──────────────────────────────────────────
+function getDeviceInfo(){
+  const ua=navigator.userAgent;
+  const isMobile=/Android|iPhone|iPad|iPod|Mobile/i.test(ua);
+  const isTablet=/iPad|Tablet/i.test(ua);
+  const deviceType=isTablet?'tablet':isMobile?'mobile':'desktop';
+  const os=/Windows/i.test(ua)?'windows':/Mac/i.test(ua)?'mac':/Android/i.test(ua)?'android':/iPhone|iPad/i.test(ua)?'ios':/Linux/i.test(ua)?'linux':'unknown';
+  const browser=/Chrome/i.test(ua)&&!/Edge|Brave/i.test(ua)?'chrome':/Firefox/i.test(ua)?'firefox':/Safari/i.test(ua)&&!/Chrome/i.test(ua)?'safari':/Edge/i.test(ua)?'edge':'other';
+  return{deviceType,os,browser,screenW:screen.width,screenH:screen.height};
+}
+track('page_open', getDeviceInfo());
+
+// ── Notification permission ───────────────────────────────────
+let _notifGranted = false;
+function requestNotifPermission(){
+  if(!('Notification' in window))return;
+  if(Notification.permission==='granted'){_notifGranted=true;return;}
+  if(Notification.permission!=='denied'){
+    Notification.requestPermission().then(p=>{_notifGranted=(p==='granted');});
+  }
+}
+function sendNotification(){
+  if(!_notifGranted)return;
+  try{
+    new Notification('MaePixel',{
+      body:'Your blend is ready — click to view',
+      icon:'',
+      badge:''
+    });
+  }catch(e){}
+}
+
+// ── Share feature ─────────────────────────────────────────────
+async function shareOutput(){
+  if(!S.outData)return;
+  const shareUrl='https://frontend.maepixel.workers.dev/';
+  const shareText='Made with MaePixel: '+shareUrl;
+  // Try Web Share API with image (mobile/modern desktop)
+  if(navigator.share){
+    try{
+      const offscreen=document.createElement('canvas');
+      offscreen.width=S.w;offscreen.height=S.h;
+      offscreen.getContext('2d').putImageData(S.outData,0,0);
+      offscreen.toBlob(async blob=>{
+        const file=new File([blob],'maepixel_blend.png',{type:'image/png'});
+        try{
+          await navigator.share({files:[file],text:shareText});
+          track('share',{method:'native_file'});
+        }catch(e){
+          // File share failed — try URL only
+          try{
+            await navigator.share({text:shareText,url:shareUrl});
+            track('share',{method:'native_url'});
+          }catch(e2){}
+        }
+      },'image/png');
+      return;
+    }catch(e){}
+  }
+  // Fallback: copy link to clipboard
+  try{
+    await navigator.clipboard.writeText(shareText);
+    const btn=document.getElementById('shareBtn');
+    const orig=btn.textContent;
+    btn.textContent='✓ LINK COPIED';
+    setTimeout(()=>btn.textContent=orig,2000);
+    track('share',{method:'clipboard'});
+  }catch(e){
+    // Last resort: prompt
+    prompt('Copy this link:',shareText);
+  }
+}
+
+// ── Session history persistence ───────────────────────────────
+function saveHistoryToStorage(){
+  try{
+    const toSave=S.history.slice(0,10).map(e=>({
+      thumbA:e.thumbA,thumbB:e.thumbB,thumbOut:e.thumbOut,
+      mode:e.mode,time:e.time,w:e.w,h:e.h
+      // Note: outData not persisted (too large) — thumbnails only
+    }));
+    localStorage.setItem('mp_history',JSON.stringify(toSave));
+  }catch(e){}
+}
+function loadHistoryFromStorage(){
+  try{
+    const saved=localStorage.getItem('mp_history');
+    if(!saved)return;
+    const items=JSON.parse(saved);
+    // Restore as display-only history (no outData = can't re-download)
+    items.forEach(e=>{
+      S.history.push({...e,outData:null});
+    });
+    if(S.history.length>0)renderHistory();
+  }catch(e){}
+}
+
+// ── Onboarding ────────────────────────────────────────────────
+function dismissOnboard(){
+  document.getElementById('onboardOverlay').classList.add('hidden');
+  localStorage.setItem('mp_onboarded','1');
+}
+function checkOnboard(){
+  if(!localStorage.getItem('mp_onboarded')){
+    document.getElementById('onboardOverlay').classList.remove('hidden');
+  }else{
+    document.getElementById('onboardOverlay').classList.add('hidden');
+  }
+}
 
 // ── Init ──────────────────────────────────────────────────────
 document.getElementById('freqControls').style.display='none';
@@ -2196,8 +2419,10 @@ updateComposeBtn();
 loadShowcase();
 
 // page_fully_loaded event (fix 4) — fires when UI is interactive
-track('page_fully_loaded');
+// page_fully_loaded with device info already tracked above
 setStatus('upload two images to begin — or try a sample below');
+checkOnboard();
+loadHistoryFromStorage();
 
 </script>
 </body>
